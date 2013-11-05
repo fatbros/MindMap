@@ -1,0 +1,54 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+header{
+    margin-bottom: 50px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
+}
+
+header h1{
+    font-size: 2em;
+    font-weight: bold;
+}
+
+header #logo{
+    width: 400px;
+    float: left;
+}
+
+header #login_user{
+    width: 400px;
+    float: right;
+}
+
+#canvas{
+    background: #aaa;
+    display: none;
+}
+
+#login textarea{
+    display: block;
+    width: 20%;
+    height: 2em;
+}
+
+#yes, #no{
+    float: left;
+    transition: 0.5s ease;
+    cursor: pointer;
+}
+
+#yes:hover, #no:hover{
+    color: #3498db;
+}
+
+.clear{
+    clear: both;
+}

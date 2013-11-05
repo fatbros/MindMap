@@ -1,0 +1,81 @@
+<!DOCTYPE HTML>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8">
+	<title>MindMap</title>
+	<link rel="stylesheet" href="/stylesheets/screen.css" />
+	<link rel="stylesheet" href="/stylesheets/style.css" />
+	<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+	<script type="text/javascript" src="/javascripts/jquery-1.9.1.js"></script>
+	<script type="text/javascript" src="/javascripts/jquery-ui-1.10.3.custom.min.js"></script>
+	<script type="text/javascript" src="/javascripts/easeljs-0.6.1.min.js"></script>
+	<script type="text/javascript" src="/javascripts/raphael-min.js"></script>
+	<script type="text/javascript" src="/javascripts/svg.js"></script>
+	<script type="text/javascript" src="/javascripts/sub.js"></script>
+	<script type="text/javascript" src="/javascripts/element.js"></script>
+	<script type="text/javascript" src="/javascripts/img.js"></script>
+	<script type="text/javascript" src="/javascripts/index.js"></script>
+</head>
+<body>
+	<div id="overflow_box">
+		<header>
+			<div id="logo">
+			    <h1><%= title%></h1>
+			    <p>welcome to <%= title%></p>
+			</div>
+			<div id="login_user"></div>
+			<div class="clear"></div>
+		</header>
+
+		<section id="login">
+			<p>ユーザー名を入力してください</p>
+			<textarea></textarea>
+			<div class="yes">YES</div>
+			<div class="no" style="margin-left: 20px">NO</div>
+			<div class="clear"></div>
+		</section>
+		<!-- login end -->
+
+		<section id="main">
+			<section id="canvas_area">
+				<canvas id="canvas" width="600px" height="600px"></canvas>
+				<div class="yes">YES</div>
+				<div class="no" style="margin-left: 20px">NO</div>
+			</section>
+			<div id="svg"></div>
+			<div id="img"></div>
+			<div id="confirmation">
+				<div id="img_confirmation">
+					<div id="select_animation_t"></div>
+					<div id="select_animation_b"></div>
+					<div id="select_animation_l"></div>
+					<div id="select_animation_r"></div>
+					<div id="square_tl" class="square" rel="t/l/b/r"></div>
+					<div id="square_bl" class="square" rel="b/l/t/r"></div>
+					<div id="square_br" class="square" rel="b/r/t/l"></div>
+					<div id="square_tr" class="square" rel="t/r/b/l"></div>
+				</div>
+				<!-- img_confirmation end -->
+				<div id="loading">
+					<img src="/images/loading.gif" alt="">
+					<div id="message"></div>
+				</div>
+				<!-- loading end -->
+				<div id="main_brunch">
+					<textarea name="main" class="mind_title" num="0" placeholder="MindMap Title"></textarea>
+					<textarea name="main" class="main_brunch" num="1" placeholder="Main Brunch name"></textarea>
+					<textarea name="main" class="main_brunch" num="2" placeholder="Main Brunch name"></textarea>
+					<textarea name="main" class="main_brunch" num="3" placeholder="Main Brunch name"></textarea>
+					<textarea name="main" class="main_brunch" num="4" placeholder="Main Brunch name"></textarea>
+					<div class="enter">enter</div>
+			</div>
+		</section>
+		<!-- main end -->
+		<script type="text/javascript">
+			var svg_selector = Raphael('svg','100%','100%');
+			var element = [];
+			var access = {};
+		</script>
+	</div>
+</body>
+</html>

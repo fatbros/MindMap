@@ -1,0 +1,249 @@
+/* extend */
+#border_animation, #confirmation #img_confirmation #select_animation_t, #confirmation #img_confirmation #select_animation_b, #confirmation #img_confirmation #select_animation_l, #confirmation #img_confirmation #select_animation_r {
+  position: absolute;
+  background-image: url(../images/border.gif); }
+
+#square, #confirmation #img_confirmation #square_tl, #confirmation #img_confirmation #square_bl, #confirmation #img_confirmation #square_br, #confirmation #img_confirmation #square_tr {
+  position: absolute;
+  background-image: url(../images/square.png);
+  width: 10px;
+  height: 10px;
+  background-size: cover;
+  background-color: #fff; }
+
+/* extend */
+html {
+  width: 100%;
+  height: 100%; }
+
+body {
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  width: 100%;
+  height: 100%; }
+
+a {
+  color: #00B7FF; }
+
+#overflow_box {
+  width: 100%;
+  height: 100%; }
+
+header {
+  border-bottom: 1px solid #ddd;
+  padding: 30px; }
+  header h1 {
+    font-size: 2em;
+    font-weight: bold; }
+  header #logo {
+    width: 400px;
+    float: left; }
+  header #loging_user {
+    width: 400px;
+    float: right; }
+
+#canvas_area {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  z-index: 100;
+  display: none; }
+  #canvas_area #canvas {
+    display: block;
+    background: #aaa; }
+
+#svg {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  z-index: -1;
+  width: 100%;
+  height: 100%; }
+
+#img {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  z-index: -1; }
+
+#confirmation {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba(200, 200, 200, 0.8);
+  display: none; }
+  #confirmation #loading {
+    display: none;
+    position: absolute;
+    background: white;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    -ms-border-radius: 10px;
+    -o-border-radius: 10px;
+    border-radius: 10px; }
+    #confirmation #loading img {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      margin-left: -24px; }
+    #confirmation #loading #message {
+      text-align: center;
+      padding: 64px 10px 10px 10px; }
+  #confirmation #main_brunch {
+    width: 100%;
+    display: none;
+    text-align: center; }
+    #confirmation #main_brunch textarea {
+      font-size: 14px;
+      margin: 0 auto;
+      height: 24px;
+      padding-top: 9px;
+      margin-top: 30px;
+      border: 1px solid #555;
+      -webkit-border-radius: 3px;
+      -moz-border-radius: 3px;
+      -ms-border-radius: 3px;
+      -o-border-radius: 3px;
+      border-radius: 3px; }
+    #confirmation #main_brunch .mind_title {
+      width: 70%;
+      display: block; }
+    #confirmation #main_brunch .main_brunch {
+      width: 40%;
+      display: inline-block; }
+    #confirmation #main_brunch .enter {
+      display: block;
+      margin: 0 auto;
+      margin-top: 35px;
+      width: 45px;
+      padding: 4px 12px 4px 12px;
+      background: #fff;
+      border: 1px solid #aaa;
+      cursor: pointer;
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      -ms-border-radius: 5px;
+      -o-border-radius: 5px;
+      border-radius: 5px;
+      -webkit-transition: 0.5s linear;
+      -moz-transition: 0.5s linear;
+      -o-transition: 0.5s linear;
+      transition: 0.5s linear; }
+      #confirmation #main_brunch .enter:hover {
+        -webkit-box-shadow: 1px 1px 10px #888888;
+        -moz-box-shadow: 1px 1px 10px #888888;
+        box-shadow: 1px 1px 10px #888888; }
+  #confirmation #img_confirmation {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    z-index: 10;
+    display: none; }
+    #confirmation #img_confirmation #select_animation_t {
+      width: 300px;
+      height: 1px;
+      top: 0px; }
+    #confirmation #img_confirmation #select_animation_b {
+      width: 300px;
+      height: 1px;
+      bottom: 0px; }
+    #confirmation #img_confirmation #select_animation_l {
+      width: 1px;
+      height: 300px;
+      left: 0px; }
+    #confirmation #img_confirmation #select_animation_r {
+      width: 1px;
+      height: 300px;
+      right: 0px; }
+    #confirmation #img_confirmation #square_tl {
+      top: -5px;
+      left: -5px; }
+    #confirmation #img_confirmation #square_bl {
+      left: -5px;
+      top: 295px; }
+    #confirmation #img_confirmation #square_br {
+      left: 295px;
+      top: 295px; }
+    #confirmation #img_confirmation #square_tr {
+      top: -5px;
+      left: 295px; }
+    #confirmation #img_confirmation .square {
+      cursor: pointer; }
+    #confirmation #img_confirmation .enter {
+      position: absolute;
+      bottom: -35px;
+      padding: 4px 12px 4px 12px;
+      background: #fff;
+      border: 1px solid #aaa;
+      cursor: pointer;
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      -ms-border-radius: 5px;
+      -o-border-radius: 5px;
+      border-radius: 5px;
+      -webkit-transition: 0.5s linear;
+      -moz-transition: 0.5s linear;
+      -o-transition: 0.5s linear;
+      transition: 0.5s linear; }
+      #confirmation #img_confirmation .enter:hover {
+        -webkit-box-shadow: 1px 1px 10px #888888;
+        -moz-box-shadow: 1px 1px 10px #888888;
+        box-shadow: 1px 1px 10px #888888; }
+
+#main {
+  width: 100%;
+  height: 100%;
+  position: relative; }
+  #main .rad_map {
+    background: #eee;
+    text-align: center;
+    cursor: move;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -ms-border-radius: 5px;
+    -o-border-radius: 5px;
+    border-radius: 5px; }
+    #main .rad_map span {
+      cursor: text; }
+    #main .rad_map .plus_l {
+      width: 15px;
+      height: 15px;
+      position: absolute;
+      left: -7px;
+      filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+      opacity: 0;
+      cursor: pointer; }
+    #main .rad_map .plus_r {
+      width: 15px;
+      height: 15px;
+      position: absolute;
+      right: -7px;
+      filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+      opacity: 0;
+      cursor: pointer; }
+    #main .rad_map .delete {
+      width: 15px;
+      height: 15px;
+      position: absolute;
+      filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+      opacity: 0;
+      cursor: pointer;
+      top: -12px;
+      right: -12px; }
+
+#login textarea {
+  display: block;
+  width: 20%;
+  height: 2em; }
+
+.yes, .no {
+  float: left;
+  transition: 0.5s ease;
+  cursor: pointer; }
+
+.yes:hover, .no:hover {
+  color: #3498db; }
+
+.clear {
+  clear: both; }
