@@ -3,6 +3,8 @@
  * Module dependencies.
  */
 
+//test
+
 var express = require('express')
   , routes = require('./routes')//indexのみ
   , user = require('./routes/user')
