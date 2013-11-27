@@ -8,6 +8,7 @@
 var express = require('express')
   , routes = require('./routes')//indexのみ
   , user = require('./routes/user')
+, htmlTest = require('./routes/htmlTest')
   , path = require('path');
   
 var http = require('http');
@@ -33,6 +34,7 @@ if ('development' == app.get('env')) {
 
 app.get('/', routes.index);
 app.get('/users', user.list);
+app.get('/htmlTest', htmlTest.htmlRes);
 
 
 var server = http.createServer(app);
