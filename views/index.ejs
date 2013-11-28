@@ -4,77 +4,205 @@
 	<meta charset="UTF-8">
 	<title>MindMap</title>
 	<link rel="stylesheet" href="/stylesheets/screen.css" />
-	<link rel="stylesheet" href="/stylesheets/style.css" />
+	<link rel="stylesheet" href="/stylesheets/print.css" />
 	<script type="text/javascript" src="/socket.io/socket.io.js"></script>
-	<script type="text/javascript" src="/javascripts/jquery-1.9.1.js"></script>
-	<script type="text/javascript" src="/javascripts/jquery-ui-1.10.3.custom.min.js"></script>
-	<script type="text/javascript" src="/javascripts/easeljs-0.6.1.min.js"></script>
+	<script type="text/javascript" src="/javascripts/jquery-1.8.3.js"></script>
+	<script type="text/javascript" src="/javascripts/jquery-ui-1.9.2.custom.min.js"></script>
+	<script type="text/javascript" src="/javascripts/easeljs-0.7.0.min.js"></script>
+	<!--
 	<script type="text/javascript" src="/javascripts/raphael-min.js"></script>
 	<script type="text/javascript" src="/javascripts/svg.js"></script>
 	<script type="text/javascript" src="/javascripts/sub.js"></script>
 	<script type="text/javascript" src="/javascripts/element.js"></script>
 	<script type="text/javascript" src="/javascripts/img.js"></script>
+	-->
 	<script type="text/javascript" src="/javascripts/index.js"></script>
+	<script type="text/javascript" src="/javascripts/animation.js"></script>
 </head>
 <body>
-	<div id="overflow_box">
-		<header>
-			<div id="logo">
-			    <h1><%= title%></h1>
-			    <p>welcome to <%= title%></p>
-			</div>
-			<div id="login_user"></div>
-			<div class="clear"></div>
-		</header>
-		<section id="login">
-			<p>ユーザー名を入力してください</p>
-			<textarea></textarea>
-			<div class="yes">YES</div>
-			<div class="no" style="margin-left: 20px">NO</div>
-			<div class="clear"></div>
-		</section>
-		<!-- login end -->
+	 <header>
+        <div id="logo">
+            <img src="/images/7-2.png" alt="logo">
+        </div>
+    </header>
+    <!-- /header -->
 
-		<section id="main">
-			<section id="canvas_area">
-				<canvas id="canvas" width="600px" height="600px"></canvas>
-				<div class="yes">YES</div>
-				<div class="no" style="margin-left: 20px">NO</div>
-			</section>
-			<div id="svg"></div>
-			<div id="img"></div>
-			<div id="confirmation">
-				<div id="img_confirmation">
-					<div id="select_animation_t"></div>
-					<div id="select_animation_b"></div>
-					<div id="select_animation_l"></div>
-					<div id="select_animation_r"></div>
-					<div id="square_tl" class="square" rel="t/l/b/r"></div>
-					<div id="square_bl" class="square" rel="b/l/t/r"></div>
-					<div id="square_br" class="square" rel="b/r/t/l"></div>
-					<div id="square_tr" class="square" rel="t/r/b/l"></div>
-				</div>
-				<!-- img_confirmation end -->
-				<div id="loading">
-					<img src="/images/loading.gif" alt="">
-					<div id="message"></div>
-				</div>
-				<!-- loading end -->
-				<div id="main_brunch">
-					<textarea name="main" class="mind_title" num="0" placeholder="MindMap Title"></textarea>
-					<textarea name="main" class="main_brunch" num="1" placeholder="Main Brunch name"></textarea>
-					<textarea name="main" class="main_brunch" num="2" placeholder="Main Brunch name"></textarea>
-					<textarea name="main" class="main_brunch" num="3" placeholder="Main Brunch name"></textarea>
-					<textarea name="main" class="main_brunch" num="4" placeholder="Main Brunch name"></textarea>
-					<div class="enter">enter</div>
-			</div>
-		</section>
-		<!-- main end -->
-		<script type="text/javascript">
-			var svg_selector = Raphael('svg','100%','100%');
-			var element = [];
-			var access = {};
-		</script>
-	</div>
+    <div id="mainWrap">
+
+        <div id="side">
+        	<h4 class="navHeader">
+                    USER
+            </h4>
+            <div class="userInfo">
+                <!-- /.navHeader -->
+                <div class="userPic">
+                    <div class="over_blue">
+                        <div class="over_white">
+                            <img src="/images/user.png" alt="user">
+                        </div>
+                        <!-- /#over_white -->
+                    </div>
+                    <!-- /#over_blue -->
+                </div>
+                <!-- /#userPic -->
+                <div class="userName"></div>
+                <!-- /#userName -->
+            </div>
+            <!-- /#userInfo -->
+            <h4 class="navHeader">
+                    MENU
+            </h4>
+            <nav>
+                <ul>
+                    <li id="brunch">Brunch Edit</li>
+                    <li id="image">Image Edit</li>
+                    <li id="canvas">Canvas</li>
+                </ul>
+            </nav>
+        </div>
+        <!-- /#side -->
+
+        <div id="main">
+
+            <div id="loginWrap">
+                <div id="loginForm">
+                    <div id="form_top">
+                        <div id="form_pic">
+                            <img src="/images/user.png" alt="user">
+                        </div>
+                        <input type="text" id="form_name" placeholder="Your Name">
+                        </input>
+                        <div class="clear"></div>
+                    </div>
+                    <!-- /#form_top -->
+                    <div id="form_bottom">
+                        <div id="loginButton_box">
+                            <div id="loginButton">
+                                Login
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /#form_bottom -->
+                </div>
+                <!-- /#loginForm -->
+
+                <div id="loginForm_start">
+                    
+                </div>
+                <!-- /#loginForm_start -->
+            </div>
+            <!-- /#login_wrap -->
+
+            <div id="canvas_area">
+                <div id="canvas_topBar">
+                    <img src="/images/close.png" alt="close" id="close_btn">
+                </div>
+                <!-- /#canvas_topBar -->
+                <canvas width="500px" height="400px" id="draw_canvas">
+                </canvas>
+                <div id="canvas_bottomBar">
+                    <div id="select_colorBox">
+                        <div id="colorBox_top">
+                            <div class="white">
+                                <div id="pink"></div>
+                            </div>
+                            <div class="white">
+                                <div id="blue"></div>
+                            </div>
+                            <div class="white">
+                                <div id="green"></div>
+                            </div>
+                            <div class="white">
+                                <div id="yellow"></div>
+                            </div>
+                            <div class="clear"></div>
+                        </div>
+                        <!-- /#colorBox_top -->
+
+                        <div id="colorBox_bottom">
+                            <div class="white">
+                                <div id="orange"></div>
+                            </div>
+                            <div class="white">
+                                <div id="brown"></div>
+                            </div>
+                            <div class="white">
+                                <div id="gray"></div>
+                            </div>
+                            <div class="white">
+                                <div id="black"></div>
+                            </div>
+                            <div class="clear"></div>
+                        </div>
+                        <!-- /#colorBox_bottom -->
+
+                    </div>
+                    <!-- /#select_colorBox -->
+                    <div id="eraser">
+                        
+                    </div>
+                    <!-- /#eraser -->
+                    <div class="clear"></div>
+                </div>
+                <!-- /#canvas_bottomBar -->
+            </div>
+            <!-- /#canvas_area -->
+        </div>
+        <!-- /#main -->
+        <div id="other_user_login">
+            <h4 class="navHeader">
+                LOGIN
+            </h4>
+        </div>
+        <!-- /#other_user_login -->
+    </div>
+    <!-- /#mainWrap -->
+	<script type="text/javascript">
+		//var svg_selector = Raphael('svg','100%','100%');
+		var element = [];
+		var access = {};
+	</script>
 </body>
 </html>
+
+<!--
+	<section id="main">
+		<section id="canvas_area">
+			<canvas id="canvas" width="600px" height="600px"></canvas>
+			<div class="yes">YES</div>
+			<div class="no" style="margin-left: 20px">NO</div>
+		</section>
+		<div id="svg"></div>
+		<div id="img"></div>
+		<div id="confirmation">
+			<div id="img_confirmation">
+				<div id="select_animation_t"></div>
+				<div id="select_animation_b"></div>
+				<div id="select_animation_l"></div>
+				<div id="select_animation_r"></div>
+				<div id="square_tl" class="square" rel="t/l/b/r"></div>
+				<div id="square_bl" class="square" rel="b/l/t/r"></div>
+				<div id="square_br" class="square" rel="b/r/t/l"></div>
+				<div id="square_tr" class="square" rel="t/r/b/l"></div>
+			</div>
+-->
+			<!-- img_confirmation end -->
+<!-- 
+			<div id="loading">
+				<img src="/images/loading.gif" alt="">
+				<div id="message"></div>
+			</div>
+-->
+			<!-- loading end -->
+<!--
+			<div id="main_brunch">
+				<textarea name="main" class="mind_title" num="0" placeholder="MindMap Title"></textarea>
+				<textarea name="main" class="main_brunch" num="1" placeholder="Main Brunch name"></textarea>
+				<textarea name="main" class="main_brunch" num="2" placeholder="Main Brunch name"></textarea>
+				<textarea name="main" class="main_brunch" num="3" placeholder="Main Brunch name"></textarea>
+				<textarea name="main" class="main_brunch" num="4" placeholder="Main Brunch name"></textarea>
+				<div class="enter">enter</div>
+		</div>
+	</section>
+-->
+	<!-- main end -->
