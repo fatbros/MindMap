@@ -394,6 +394,7 @@ $(function(){
         this.stage = new createjs.Stage(this.canvas);
         this.shape = new createjs.Shape();
         this.tick = createjs.Ticker;
+        this.select_color = '';
     
         this.position = {
                 newX: 0,
@@ -405,7 +406,8 @@ $(function(){
         this.all_draw_coord = [];
         //サーバーに送るdrawデータ
         this.emit_draw_coord = [];
-    }
+    };
+    
     Canvas.prototype.init = function(){
         this.stage.autoClear = false;
         this.stage.addChild(this.shape);
@@ -413,8 +415,47 @@ $(function(){
         //tickイベントの削除のため
         this.tickBoundFunc = this.handleTick.bind(this);
         this.tick.addEventListener('tick', this.tickBoundFunc);
+        this.color_selector();
         this.stageEvent();
         this.socket();
+    };
+
+    Canvas.prototype.color_selector = function(){
+        var that = this;
+        //カラーの情報
+        var color = {
+            pink: '#e87ea5',
+            green: '#8ac233',
+            blue: '#41babc',
+            yellow: '#f4dd25',
+            orange: '#f08d5b',
+            brown: '#7a5749',
+            gray: '#a3a3a3',
+            black: '#3e3a39'
+        };
+
+        //button animation-------------------
+        var eraser = $('#eraser');
+        //colorBox
+        $('#colorBox_top > div, #colorBox_bottom > div').on('click', function(){
+            var colorBox = $('#colorBox_top, #colorBox_bottom');
+            //colorBoxの中の要素にbox-shadowのクラスが追加されている可能性があるためあらかじめ削除する。
+            colorBox.find('.colorCircle_click_after').removeClass('colorCircle_click_after');
+            //消しゴムが選択されている場合があるのでanimationクラスを削除しておく
+            eraser.removeClass('eraser_click_after');
+            //色情報をidから取得し、this.now_colorに代入
+            var colorBox = $(this).find('div');
+            that.select_color = color[colorBox.attr('id')];
+            //thisからクリックしたボタンを判定しbox-shadowのクラスを追加する
+            colorBox.addClass('colorCircle_click_after');
+        });
+        //eraser
+        eraser.on('click', function(){
+            that.select_color = '#fff';
+            //色が選択されている場合があるのであらかじめanimationクラスを削除しておく
+            $('#colorBox_top, #colorBox_bottom').find('.colorCircle_click_after').removeClass('colorCircle_click_after');
+            eraser.addClass('eraser_click_after');
+        });
     };
     
     Canvas.prototype.stageEvent = function(){
@@ -424,27 +465,24 @@ $(function(){
         stage.addEventListener('stagemousedown', mouseDown, false);
 
         function mouseDown(e){
-            console.log('mousedown');
-            console.log(e.stageX, e.stageY);
-            that.position = {
-                oldX: e.stageX,
-                oldY: e.stageY
-            };
-            that.emit_draw_coord.push($.extend('true', {}, {
-                newX: that.position.oldX,
-                newY: that.position.oldY
-            }));
-            stage.addEventListener('stagemousemove', mouseMove, false);
-            stage.addEventListener('stagemouseup', mouseUp, false);
+            if(that.select_color !== ''){
+                that.position = {
+                    oldX: e.stageX,
+                    oldY: e.stageY
+                };
+                that.emit_draw_coord.push($.extend('true', {}, {
+                    newX: that.position.oldX,
+                    newY: that.position.oldY
+                }));
+                stage.addEventListener('stagemousemove', mouseMove, false);
+                stage.addEventListener('stagemouseup', mouseUp, false);
+            }
         }
         function mouseMove(e){
-            // var push_local = {
-            //     newX: that.position.newX,
-            //     newY: that.position.newY
-            // };
             that.position.newX = parseInt(e.stageX);
             that.position.newY = parseInt(e.stageY);
-            that.shape.graphics.clear().setStrokeStyle(5, 'round', 'round').beginStroke('#333333').moveTo(that.position.oldX,that.position.oldY).lineTo(that.position.newX,that.position.newY);
+            console.log(that.select_color);
+            that.shape.graphics.clear().setStrokeStyle(5, 'round', 'round').beginStroke(that.select_color).moveTo(that.position.oldX,that.position.oldY).lineTo(that.position.newX,that.position.newY);
             that.emit_draw_coord.push($.extend('true', {}, {
                 newX: that.position.newX,
                 newY: that.position.newY
@@ -453,15 +491,12 @@ $(function(){
             that.position.oldX = parseInt(e.stageX);
             that.position.oldY = parseInt(e.stageY);
             stage.update();
-            console.log(that.emit_draw_coord);
         }
         function mouseUp(e){
             stage.removeEventListener('stagemousemove', mouseMove, false);
-            console.log('mouseUp');
-            console.log(e.stageX, e.stageY);
             //canvas以外をクリックしても判定されるバグあり
             if(that.emit_draw_coord.length !== 0){
-                socket.emit('send_draw_coord',{XY: that.emit_draw_coord});
+                socket.emit('send_draw_coord',{XY: that.emit_draw_coord, color: that.select_color});
                 //参照させないように座標をpushする
                 that.all_draw_coord.push($.extend(true, {}, that.emit_draw_coord));
                 //emitしたあとemit_draw_coordの中身を完全に削除し使い回せるようにする
@@ -510,8 +545,10 @@ $(function(){
         var that = this;
         //送られてきたarrayの座標通り描画する
         socket.on('draw_canvas', function(data){
+            console.log('testcolor');
+            console.log(data.color);
             for(var i = 1; i < data.XY.length - 1; i++){
-                  that.shape.graphics.clear().setStrokeStyle(5, 'round', 'round').beginStroke('#333333').moveTo(data.XY[i].newX,data.XY[i].newY).lineTo(data.XY[i+1].newX,data.XY[i+1].newY);
+                  that.shape.graphics.clear().setStrokeStyle(5, 'round', 'round').beginStroke(data.color).moveTo(data.XY[i].newX,data.XY[i].newY).lineTo(data.XY[i+1].newX,data.XY[i+1].newY);
                   that.stage.update();
             }
             that.all_draw_coord.push($.extend(true, {}, data.XY));

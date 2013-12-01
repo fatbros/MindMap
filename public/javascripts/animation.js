@@ -74,24 +74,17 @@ $(function(){
         canvas_nav.on('mouseleave', end_navColor_animation);
     });
 
-    //button animation-------------------
-    var eraser = $('#eraser');
-    //colorBox
-    $('#colorBox_top > div, #colorBox_bottom > div').on('click', function(){
-        var colorBox = $('#colorBox_top, #colorBox_bottom');
-        //colorBoxの中の要素にbox-shadowのクラスが追加されている可能性があるためあらかじめ削除する。
-        colorBox.find('.colorCircle_click_after').removeClass('colorCircle_click_after');
-        //消しゴムが選択されている場合があるのでanimationクラスを削除しておく
-        eraser.removeClass('eraser_click_after');
-        //thisからクリックしたボタンを判定しbox-shadowのクラスを追加する
-        var colorBox = $(this).find('div');
-        colorBox.addClass('colorCircle_click_after');
-    });
-    //eraser
-    eraser.on('click', function(){
-        //色が選択されている場合があるのであらかじめanimationクラスを削除しておく
-        $('#colorBox_top, #colorBox_bottom').find('.colorCircle_click_after').removeClass('colorCircle_click_after');
-        eraser.addClass('eraser_click_after');
+    //canvas number======================
+    var number = $('#canvas_number');
+    number.find('div span').on('click', function(){
+        $(this).parent().find('span').each(function(){
+            $(this).animate({
+                'color': '#fff'
+            });
+        });
+        $(this).animate({
+            'color': '#3e3a39'
+        });
     });
     //===================================
     

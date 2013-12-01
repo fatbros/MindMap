@@ -188,7 +188,7 @@ header {
 		}
 	}
 	.userName {
-			width: 116px;
+			width: 90%;
 			text-align: center;
 			margin: 0 auto;
 			margin-top: 10px;
@@ -259,7 +259,7 @@ nav {
 	position: absolute;
 	left: -500px;
 	opacity: 0;
-
+	
 	canvas {
 			background: #fff;
 			@include box-shadow(0 0 6px -1px $box_shadow_header);
@@ -271,6 +271,28 @@ nav {
 		cursor: move;
 		@include box-shadow(0 0 6px -1px $box_shadow_header);
 		@include border-radius(10px 10px 0 0);
+		#canvas_number {
+			width: 200px;
+			height: 35px;
+			position: absolute;
+			top: 3px;
+			left: 50%;
+			margin-left: -100px;
+			img {
+				height: 17px;
+				display: block;
+				margin: 0 auto;
+			}
+			div {
+				text-align: center;
+				letter-spacing: 0.2em;
+				color: #fff;
+				@include Raleway;
+			}
+			span {
+				cursor: pointer;
+			}
+		}
 		#close_btn {
 			position: absolute;
 			width: 15px;
@@ -278,6 +300,14 @@ nav {
 			left: 3px;
 			cursor: pointer;
 		}
+		#create_button {
+			height: 20px;
+			position: absolute;
+			right: 11px;
+			top: 10px;
+			cursor: pointer;
+		}
+
 	}
 
 	@mixin circle_background($color){
@@ -340,7 +370,7 @@ nav {
 			}
 			#colorBox_bottom {
 				.white:first-child {
-					margin-left: 60px;
+					margin-left: 61px;
 				}
 				#orange {
 					@include circle_background($orange);

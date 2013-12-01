@@ -155,7 +155,7 @@ header {
         margin: 0 auto;
         padding-top: 14px; }
   .userInfo .userName {
-    width: 116px;
+    width: 90%;
     text-align: center;
     margin: 0 auto;
     margin-top: 10px;
@@ -233,11 +233,35 @@ nav {
     -ms-border-radius: 10px 10px 0 0;
     -o-border-radius: 10px 10px 0 0;
     border-radius: 10px 10px 0 0; }
+    #canvas_area #canvas_topBar #canvas_number {
+      width: 200px;
+      height: 35px;
+      position: absolute;
+      top: 3px;
+      left: 50%;
+      margin-left: -100px; }
+      #canvas_area #canvas_topBar #canvas_number img {
+        height: 17px;
+        display: block;
+        margin: 0 auto; }
+      #canvas_area #canvas_topBar #canvas_number div {
+        text-align: center;
+        letter-spacing: 0.2em;
+        color: #fff;
+        font-family: "Raleway", "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; }
+      #canvas_area #canvas_topBar #canvas_number span {
+        cursor: pointer; }
     #canvas_area #canvas_topBar #close_btn {
       position: absolute;
       width: 15px;
       top: 3px;
       left: 3px;
+      cursor: pointer; }
+    #canvas_area #canvas_topBar #create_button {
+      height: 20px;
+      position: absolute;
+      right: 11px;
+      top: 10px;
       cursor: pointer; }
   #canvas_area #canvas_bottomBar {
     height: 80px;
@@ -347,7 +371,7 @@ nav {
         -o-transition-timing-function: linear;
         transition-timing-function: linear; }
       #canvas_area #canvas_bottomBar #select_colorBox #colorBox_bottom .white:first-child {
-        margin-left: 60px; }
+        margin-left: 61px; }
       #canvas_area #canvas_bottomBar #select_colorBox #colorBox_bottom #orange {
         background-color: #f08d5b;
         -webkit-transition-property: box-shadow;

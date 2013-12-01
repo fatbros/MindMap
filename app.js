@@ -69,7 +69,7 @@ io.sockets.on('connection', function(socket){
     socket.on('send_draw_coord', function(data, fn) {
         //draw_coord_allに座標データを全てpushする
         draw_coord_all.push(data.XY);
-        socket.broadcast.emit('draw_canvas', {XY: data.XY});
+        socket.broadcast.emit('draw_canvas', {XY: data.XY, color: data.color});
     });
     //===============================================
     //ユーザーがログインした場合
