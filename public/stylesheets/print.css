@@ -545,6 +545,14 @@ nav {
   #other_user_login .userName {
     background: #ccc; }
 
+#img {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  z-index: -1; }
+
 /* extend */
 #border_animation, #img_confirmation #select_animation_t, #img_confirmation #select_animation_b, #img_confirmation #select_animation_l, #img_confirmation #select_animation_r {
   position: absolute;
@@ -663,26 +671,12 @@ nav {
     left: 295px; }
   #img_confirmation .square {
     cursor: pointer; }
-  #img_confirmation .enter {
+  #img_confirmation .end_trim {
     position: absolute;
-    bottom: -35px;
-    padding: 4px 12px 4px 12px;
-    background: #fff;
-    border: 1px solid #aaa;
-    cursor: pointer;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    -ms-border-radius: 5px;
-    -o-border-radius: 5px;
-    border-radius: 5px;
-    -webkit-transition: 0.5s linear;
-    -moz-transition: 0.5s linear;
-    -o-transition: 0.5s linear;
-    transition: 0.5s linear; }
-    #img_confirmation .enter:hover {
-      -webkit-box-shadow: 1px 1px 10px #888888;
-      -moz-box-shadow: 1px 1px 10px #888888;
-      box-shadow: 1px 1px 10px #888888; }
+    bottom: -34px;
+    left: 50%;
+    margin-left: -50px;
+    cursor: pointer; }
 
 #main {
   width: 100%;

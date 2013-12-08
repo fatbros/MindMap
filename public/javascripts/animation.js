@@ -34,6 +34,11 @@ $(function(){
                 'opacity': 0,
             }, 500);
         }
+        //#imgのz-indexが1の場合　
+        if($('#img').css('z-index') === '1'){
+            $('#img').css('z-index', '-1');
+        }
+        
         nav_li.each(end_navColor_animation);
         nav_li.off('mouseleave');
         nav_li.on('mouseleave', end_navColor_animation);
@@ -73,8 +78,14 @@ $(function(){
         off_navColor_animation(canvas_nav);
         canvas_nav.on('mouseleave', end_navColor_animation);
     });
+    
+    //img===============================
+    image_nav = $('ul #image');
+    image_nav.on('click', function(){
+        $('#img').css('z-index', 1);
+    });
 
-    //===================================
+    //==================================
     
     //ロゴの位置
     function logo_padding(){

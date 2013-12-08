@@ -10,11 +10,12 @@ $(function(){
     //===============================================
     function init(){
         //canvasの準備
+        var img_access = {};
         var canvas = {
-            0: new Canvas(0),
-            1: new Canvas(1),
-            2: new Canvas(2),
-            3: new Canvas(3)
+            0: new Canvas(0, img_access),
+            1: new Canvas(1, img_access),
+            2: new Canvas(2, img_access),
+            3: new Canvas(3, img_access)
         };
         canvas['0'].init();
         canvas['1'].init();
@@ -129,7 +130,6 @@ $(function(){
                 create_img: (function(){
                     $('#create_button').on({
                         'click': function(){
-                            console.log('aaa');
                             if(!select_canvas_number){
                                 alert('なにも入力されていません');
                                 return;
@@ -217,21 +217,21 @@ $(function(){
                 });
             }, 5000);
         });
-//         //===============================================
-//         //ローディング
-//         //===============================================
-//         socket.on('loading',function(data){
-//             var confirmation_selector = $('#confirmation');
-//             var loading_selector = confirmation_selector.find('#loading');
-//             confirmation_selector.css('z-index','999').fadeIn();
-//             loading_selector.fadeIn();
-//             $('#canvas_area').fadeOut();
-//             //add message
-//             var p = $('<p>',{text: data.name + data.message});
-//             var p2 = $('<p>', {text: '少々お待ちください'});
-//             loading_selector.find('#message').append(p).append(p2);
-//             position_center(loading_selector);
-//         });
+        //===============================================
+        //ローディング
+        //===============================================
+        socket.on('loading',function(data){
+            var confirmation_selector = $('#confirmation');
+            var loading_selector = confirmation_selector.find('#loading');
+            confirmation_selector.css('z-index','999').fadeIn();
+            loading_selector.fadeIn();
+            $('#canvas_area').fadeOut();
+            //add message
+            var p = $('<p>',{text: data.name + data.message});
+            var p2 = $('<p>', {text: '少々お待ちください'});
+            loading_selector.find('#message').append(p).append(p2);
+            position_center(loading_selector);
+        });
 //         //===============================================
 //         //ローディング end
 //         //===============================================
@@ -530,13 +530,14 @@ $(function(){
     //===============================================
     //createjs canvas class
     //===============================================
-    function Canvas(number){
+    function Canvas(number, access_img){
         this.canvas = document.getElementById('draw_canvas' + number);
         this.canvas_id = number;
-        this.stage = new createjs.Stage(this.canvas);
+        //imgのハッシュ
+        this.access_img = access_img;
 
+        this.stage = new createjs.Stage(this.canvas);
         this.shape = new createjs.Shape();
-        
         this.tick = createjs.Ticker;
         this.select_color = '';
     
@@ -610,7 +611,6 @@ $(function(){
         stage.addEventListener('stagemousedown', mouseDown, false);
 
         function mouseDown(e){
-            console.log(that.canvas_id);
             if(that.select_color !== ''){
                 that.position = {
                     oldX: e.stageX,
@@ -632,7 +632,6 @@ $(function(){
                 newX: that.position.newX,
                 newY: that.position.newY
             }));
-            console.log(that.emit_draw_coord);
             //座標の入れ替え
             that.position.oldX = parseInt(e.stageX);
             that.position.oldY = parseInt(e.stageY);
@@ -669,37 +668,27 @@ $(function(){
     };
 
     Canvas.prototype.create_img = function(){
-        // socket.emit('broadcast_load');
-        var img = new Image;
-        var type = 'image/png';
-        img.src = this.canvas.toDataURL(type);
-        var dom_img = new Img(img, 0, socket);
-        dom_img.create();
-        // if(mode == 'first'){
-        //     dom_img.create();
-        // }else{
-        //     dom_img.create_second(data);
-        // }
+        if($('#img_confirmation').css('display') === 'none'){
+            socket.emit('broadcast_load');
+            var img = new Image;
+            var type = 'image/png';
+            img.src = this.canvas.toDataURL(type);
+            var access_length = Object.keys(this.access_img).length;
 
+            this.access_img[access_length] = new Img(img, access_length, socket, this.delete_canvas.bind(this));
+            this.access_img[access_length].create();
+            console.log(this.access_img);
+        }
+    };
 
-        //===============================================
-        //create_img backup
-        //===============================================
-        // //mode == first 最初にcanvasのyesを押した時
-        // if(mode == 'first'){
-        //     //他の人の画面をロード画面にする
-        //     socket.emit('broadcast_load');
-        // }
-        // var img = new Image;
-        // var type = 'image/png';
-        // img.src = this.canvas.toDataURL(type);
-        // var dom_img = new Img(img, 0, socket);
+    Canvas.prototype.delete_canvas = function(){
+        this.stage.removeChild(this.shape);
+        this.stage.clear();
+        this.stage.update();
 
-        // if(mode == 'first'){
-        //     dom_img.create();
-        // }else{
-        //     dom_img.create_second(data);
-        // }
+        this.shape = new createjs.Shape();
+        this.stage.addChild(this.shape);
+        this.stage.update();
     };
     
     Canvas.prototype.socket = function(){

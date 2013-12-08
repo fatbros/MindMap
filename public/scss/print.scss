@@ -494,6 +494,15 @@ nav {
 	}
 }
 
+#img{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
 /* extend */
 #border_animation{
     position: absolute;
@@ -630,18 +639,12 @@ nav {
     .square{
         cursor: pointer;
     }
-    .enter{
-        position: absolute;
-        bottom: -35px;
-        padding: 4px 12px 4px 12px;
-        background: #fff;
-        border: 1px solid #aaa;
-        cursor: pointer;
-        @include border-radius(5px);
-        @include transition(0.5s linear);
-        &:hover{
-            @include box-shadow(1px 1px 10px #888);
-        }
+    .end_trim {
+    	position: absolute;
+    	bottom: -34px;
+    	left: 50%;
+    	margin-left: -50px;
+    	cursor: pointer;
     }
 }
 
