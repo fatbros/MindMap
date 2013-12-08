@@ -8,14 +8,16 @@
 	<script type="text/javascript" src="/socket.io/socket.io.js"></script>
 	<script type="text/javascript" src="/javascripts/jquery-1.8.3.js"></script>
 	<script type="text/javascript" src="/javascripts/jquery-ui-1.9.2.custom.min.js"></script>
-	<script type="text/javascript" src="/javascripts/easeljs-0.7.0.min.js"></script>
+	<script type="text/javascript" src="/javascripts/easeljs-0.6.1.min.js"></script>
+	<script type="text/javascript" src="/javascripts/tweenjs-0.4.1.min.js"></script>
 	<!--
 	<script type="text/javascript" src="/javascripts/raphael-min.js"></script>
 	<script type="text/javascript" src="/javascripts/svg.js"></script>
 	<script type="text/javascript" src="/javascripts/sub.js"></script>
 	<script type="text/javascript" src="/javascripts/element.js"></script>
+    -->
+
 	<script type="text/javascript" src="/javascripts/img.js"></script>
-	-->
 	<script type="text/javascript" src="/javascripts/index.js"></script>
 	<script type="text/javascript" src="/javascripts/animation.js"></script>
 </head>
@@ -93,25 +95,78 @@
             </div>
             <!-- /#login_wrap -->
 
+            <div id="confirmation">
+                <!-- img_confirmation end -->
+                <div id="loading">
+                    <img src="/images/loading.gif" alt="">
+                    <div id="message"></div>
+                </div>
+                <!-- loading end -->
+                <div id="main_brunch">
+                    <textarea name="main" class="mind_title" num="0" placeholder="MindMap Title"></textarea>
+                    <textarea name="main" class="main_brunch" num="1" placeholder="Main Brunch name"></textarea>
+                    <textarea name="main" class="main_brunch" num="2" placeholder="Main Brunch name"></textarea>
+                    <textarea name="main" class="main_brunch" num="3" placeholder="Main Brunch name"></textarea>
+                    <textarea name="main" class="main_brunch" num="4" placeholder="Main Brunch name"></textarea>
+                    <div class="enter">enter</div>
+                </div>
+            </div>
+            <!-- /#confirmation end -->
+
             <div id="canvas_area">
                 <div id="canvas_topBar">
                     <img src="/images/close.png" alt="close" id="close_btn">
-                    <div id="canvas_number">
+					<div id="canvas_number">
                     	<img src="/images/canvas_num.png" alt="canvas_number">
                     	<div>
-	                    	<span>1</span>
-	                    	<span>2</span>
-	                    	<span>3</span>
-	                    	<span>4</span>
+	                    	<span rel="0">1</span>
+	                    	<span rel="1">2</span>
+	                    	<span rel="2">3</span>
+	                    	<span rel="3">4</span>
 	                    </div>
                     </div>
                     <!-- /#canvas_number -->
                     <img src="/images/download.png" alt="create" id="create_button">
                 </div>
                 <!-- /#canvas_topBar -->
-                <canvas width="500px" height="400px" id="draw_canvas">
-                </canvas>
+                <div id="canvas_wrap">
+	                <canvas width="500px" height="400px" id="draw_canvas0">
+	                </canvas>
+	                <canvas width="500px" height="400px" id="draw_canvas1">
+	                </canvas>
+	                <canvas width="500px" height="400px" id="draw_canvas2">
+	                </canvas>
+	                <canvas width="500px" height="400px" id="draw_canvas3">
+	                </canvas>
+
+                    <div id="img_confirmation">
+                        <div id="select_animation_t"></div>
+                        <div id="select_animation_b"></div>
+                        <div id="select_animation_l"></div>
+                        <div id="select_animation_r"></div>
+                        <div id="square_tl" class="square" rel="t/l/b/r"></div>
+                        <div id="square_bl" class="square" rel="b/l/t/r"></div>
+                        <div id="square_br" class="square" rel="b/r/t/l"></div>
+                        <div id="square_tr" class="square" rel="t/r/b/l"></div>
+                    </div>
+                    <!-- /#img_confirmation -->
+
+                </div>
+                <!-- /#canvas_wrap -->
                 <div id="canvas_bottomBar">
+                	<div id="select_color_info">
+                		<div id="select_color">
+                			<img src="/images/select_color.png" alt="select_color">
+                			<div id="now_color_box"></div>
+                		</div>
+                		<!-- /#select_color -->
+                		<div id="edit_user">
+                			<img src="/images/edit_user.png" alt="edit_user">
+                		</div>
+                		<!-- /#edit_user -->
+                		<div class="clear"></div>
+                	</div>
+                	<!-- /#select_color_info -->
                     <div id="select_colorBox">
                         <div id="colorBox_top">
                             <div class="white">
@@ -158,8 +213,10 @@
                 <!-- /#canvas_bottomBar -->
             </div>
             <!-- /#canvas_area -->
+
         </div>
         <!-- /#main -->
+
         <div id="other_user_login">
             <h4 class="navHeader">
                 LOGIN

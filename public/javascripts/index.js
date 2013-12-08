@@ -10,12 +10,142 @@ $(function(){
     //===============================================
     function init(){
         //canvasの準備
-        var canvas = new Canvas();
-        canvas.init();
+        var canvas = {
+            0: new Canvas(0),
+            1: new Canvas(1),
+            2: new Canvas(2),
+            3: new Canvas(3)
+        };
+        canvas['0'].init();
+        canvas['1'].init();
+        canvas['2'].init();
+        canvas['3'].init();
 
-        // //square draggable
-        // draggable_square();
+        //他のユーザーの状態情報
+        var otherUser_status = {};
+        //canvasの状態情報
+        var canvas_status = {
+            0: {},
+            1: {},
+            2: {},
+            3: {}
+        };
 
+        //canvasのz-indexの切り替え設定
+        //edit_canvasユーザーの設定
+        var select_canvas_animation = (function(){
+            //canvas1 = 0, cavnas2 = 1, canvas3 = 2, canvas4 = 3
+            var select_canvas_number;
+            return {
+                animation: (function(){
+                    var number = $('#canvas_number');
+                    number.find('div span').on('click', function(){
+                        //select_animation_
+                        var old_canvas_spanNumber = $(this).parent().find('span[rel = ' + select_canvas_number + ']');
+                        var old_canvas_selector = $('#draw_canvas' + select_canvas_number);
+                        var new_canvas_selector = $('#draw_canvas' + $(this).attr('rel'));
+
+                        if(select_canvas_number !== undefined){
+                            old_canvas_spanNumber.stop(true, false).animate({
+                                'color': '#fff'
+                            });
+                            old_canvas_selector.css('z-index', '-1');
+                        }
+                        select_canvas_number = $(this).attr('rel');
+                        new_canvas_selector.css('z-index', '4');
+                        $(this).stop(true, false).animate({
+                            'color': '#3e3a39'
+                        });
+                        //edit_canvasの更新
+                        select_canvas_animation.refresh_edit_canvas(select_canvas_number);
+                        //otherUserにどのcanvasを編集しているのかemitする
+                        select_canvas_animation.emit_edit_canvas_number();
+                    });
+                })(),
+                //end animation
+                emit_edit_canvas_number: function(){
+                    socket.emit('change_canvas', {
+                        number: select_canvas_number
+                    });
+                },
+                socket: (function(){
+                    function remove(data){
+                        console.log('remove start');
+                        //ユーザーの状態の古い情報を削除する
+                        //最初は何処のcanvasにも入っていないので
+                        if(otherUser_status[data.name].hasOwnProperty('select_canvas_number')){
+                            var old_edit_canvas_number = otherUser_status[data.name]['select_canvas_number'];
+                            delete canvas_status[old_edit_canvas_number][data.name];
+                        }
+                        console.log(otherUser_status);
+                        console.log(canvas_status);
+                    }
+                    //otherUserがcanvasを変更した時
+                    socket.on('otherUser_change_canvas', function(data){
+                        remove(data);
+                        //ユーザーの状態の最新情報の更新
+                        otherUser_status[data.name]['select_canvas_number'] = data.number;
+                        canvas_status[data.number][data.name] = '';
+                        //other_userが所属しているcanvasが変更されているはずなので更新する
+                        if(select_canvas_number !== undefined){
+                            select_canvas_animation.refresh_edit_canvas(select_canvas_number);
+                        }
+                        console.log('otherUser_change_canvas');
+                        console.log(otherUser_status);
+                        console.log(canvas_status);
+                    });
+                    //otherUserがlogoutした時
+                    socket.on('otherUser_remove_canvas', function(data){
+                        console.log('otherUser_remove_canvas start');
+                        remove(data);
+                    });
+                    //自分自身が途中から参加したとき、サーバーからotherUser_statusを取得する
+                    socket.on('get_otherUser_status', function(data){
+                        otherUser_status = data.otherUser;
+                        canvas_status = data.canvas;
+                        console.log(otherUser_status);
+                        console.log(canvas_status);
+                    });
+                })(),
+                refresh_edit_canvas: function(number){
+                    //canvasのメニューedit_canvasの更新
+                    var edit_user = $('#edit_user');
+                    edit_user.find('div').remove();
+                    Object.keys(canvas_status[number]).forEach(function(key){
+                        var div_user = $('<div>', {
+                            id: 'edit_' + key
+                        });
+                        var img_user = $('<img>', {
+                            src: '/images/user.png',
+                            alt: 'edit_user',
+                            class: 'edit_user_pic'
+                        });
+                        var span_user = $('<span>').append(key);
+
+                        div_user.append(img_user).append(span_user);
+                        edit_user.append(div_user);
+                    });
+                },
+                create_img: (function(){
+                    $('#create_button').on({
+                        'click': function(){
+                            console.log('aaa');
+                            if(!select_canvas_number){
+                                alert('なにも入力されていません');
+                                return;
+                            }
+                            canvas[select_canvas_number].create_img();
+                        }
+                    });
+                })()
+
+            };
+        })();
+
+        //square draggable
+        draggable_square();
+
+        //loginボタンを押した時
         $('#loginButton').on({
             'click': function(){
                 var user_name = $('#form_name').val();
@@ -43,7 +173,9 @@ $(function(){
         //===============================================
         socket.on('login_message',function(data){
             
+            //===============================================
             //other_user_loginの更新
+            //===============================================
             var userInfo = $('<div>', {class: 'userInfo', id: data.name});
             var login_status = $('<div>', {class: 'login_status'});
             var userPic = $('<div>', {class: 'userPic'});
@@ -62,12 +194,21 @@ $(function(){
             userInfo.append(userName);
 
             $('#other_user_login').append(userInfo);
+            //===============================================
+            //otherUser_statusの更新
+            //===============================================
+            otherUser_status[data.name] = {};
         });
         socket.on('logout_message',function(data){
+            //===============================================
+            //otherUser_statusの更新
+            //===============================================
+            delete otherUser_status[data.name];
+
+            //sidebarの更新
             var selector_name = $('#other_user_login #' + data.name);
             var login_status = selector_name.find('.login_status');
-            
-            login_status.animate({
+            login_status.stop(true, false).animate({
                 backgroundColor: '#e87ea5'
             });
             setTimeout(function(){
@@ -253,146 +394,149 @@ $(function(){
 //         }
 //     }
 
-//     //===============================================
-//     //center position
-//     //===============================================
-//     function position_center(Selector){
-//         var parent = {
-//             selector: Selector.parent(),
-//         };
-//         parent.width = parent.selector.width();
-//         parent.height = parent.selector.height();
+    //===============================================
+    //center position
+    //===============================================
+    function position_center(Selector){
+        var parent = {
+            selector: Selector.parent(),
+        };
+        parent.width = parent.selector.width();
+        parent.height = parent.selector.height();
 
-//         var selector = {
-//             width: Selector.width(),
-//             height: Selector.height()
-//         };
+        var selector = {
+            width: Selector.width(),
+            height: Selector.height()
+        };
         
-//         Selector.css({
-//             'top': (parent.height - selector.height)/2,
-//             'left': (parent.width - selector.width)/2,
-//             'position': 'absolute'
-//         });
-//     }
-//     //===============================================
-//     //draggable square
-//     //===============================================
-//     function draggable_square(){
-//         //img_confirmation を中心に配置する
-//         position_center($('#img_confirmation'));
-//         $('#img_confirmation .square').draggable({
-//             containment: '#main',
-//             scroll: false,
-//             opacity: 0.5,
-//             stop: function(){
-//                 select_animation_move(this);
-//             },
-//             drag: function(){
-//                 select_animation_move(this);
-//             }
-//         });
-//         function select_animation_move(that){
-//             var name_rel = $(that).attr('rel');
-//             var select_name_rel = name_rel.split('/');
-//             var select_arr = search_select_animation_rel(select_name_rel[0] + select_name_rel[1]);
-//             var select_other = {
-//                 one: {
-//                     0: select_arr[0],
-//                     1: select_arr[1]
-//                 },
-//                 two: {
-//                     0: select_arr[0],
-//                     1: select_arr[1]
-//                 }
-//             };
-//             var name = [
-//                 ['tl','tr'],
-//                 ['bl','br']
-//             ];
-//             select_other.one[0] = swich_arr(select_other.one[0]);
-//             select_other.two[1] = swich_arr(select_other.two[1]);
-//             function swich_arr(arr){
-//                 switch(arr){
-//                     case 0:
-//                         return arr = 1;
-//                         break;
-//                     case 1:
-//                         return arr = 0;
-//                         break;
-//                 }
-//             }
-//             var left = parseInt($(that).css('left'));
-//             var top = parseInt($(that).css('top'));
-//             var select_animation_selector_one = $('#select_animation_' + select_name_rel[0]);
-//             var select_animation_selector_two = $('#select_animation_' + select_name_rel[1]);
-//             var select_animation_selector_three = $('#select_animation_' + select_name_rel[2]);
-//             var select_animation_selector_four = $('#select_animation_' + select_name_rel[3]);
+        Selector.css({
+            'top': (parent.height - selector.height)/2,
+            'left': (parent.width - selector.width)/2,
+            'position': 'absolute'
+        });
+    }
+    //===============================================
+    //draggable square
+    //===============================================
+    function draggable_square(){
+        //img_confirmation を中心に配置する
+        position_center($('#img_confirmation'));
+        $('#img_confirmation .square').draggable({
+            containment: '#main',
+            scroll: false,
+            opacity: 0.5,
+            stop: function(){
+                select_animation_move(this);
+            },
+            drag: function(){
+                select_animation_move(this);
+            }
+        });
+        function select_animation_move(that){
+            var name_rel = $(that).attr('rel');
+            var select_name_rel = name_rel.split('/');
+            var select_arr = search_select_animation_rel(select_name_rel[0] + select_name_rel[1]);
+            var select_other = {
+                one: {
+                    0: select_arr[0],
+                    1: select_arr[1]
+                },
+                two: {
+                    0: select_arr[0],
+                    1: select_arr[1]
+                }
+            };
+            var name = [
+                ['tl','tr'],
+                ['bl','br']
+            ];
+            select_other.one[0] = swich_arr(select_other.one[0]);
+            select_other.two[1] = swich_arr(select_other.two[1]);
+            function swich_arr(arr){
+                switch(arr){
+                    case 0:
+                        return arr = 1;
+                        break;
+                    case 1:
+                        return arr = 0;
+                        break;
+                }
+            }
+            var left = parseInt($(that).css('left'));
+            var top = parseInt($(that).css('top'));
+            var select_animation_selector_one = $('#select_animation_' + select_name_rel[0]);
+            var select_animation_selector_two = $('#select_animation_' + select_name_rel[1]);
+            var select_animation_selector_three = $('#select_animation_' + select_name_rel[2]);
+            var select_animation_selector_four = $('#select_animation_' + select_name_rel[3]);
             
-//             var select_w = parseInt(select_animation_selector_one.css('width'));
+            var select_w = parseInt(select_animation_selector_one.css('width'));
             
-//             var square_selector_one = $('#square_' + name[select_other.one[0]][select_other.one[1]]);
-//             var square_selector_two = $('#square_' + name[select_other.two[0]][select_other.two[1]]);
-//             //gifの位置
-//             select_animation_selector_one.css('top', top);
-//             select_animation_selector_two.css('left', left);
-//             //squareの位置
-//             square_selector_two.css('top',top);
-//             square_selector_one.css('left', left);
-//             //gifの領域
-//             if(select_name_rel[1] == 'l'){
-//                 select_animation_selector_one.css('width', Math.abs(parseInt(square_selector_two.css('left')) - left));
-//                 select_animation_selector_three.css('width', Math.abs(parseInt(square_selector_two.css('left')) - left));
+            var square_selector_one = $('#square_' + name[select_other.one[0]][select_other.one[1]]);
+            var square_selector_two = $('#square_' + name[select_other.two[0]][select_other.two[1]]);
+            //gifの位置
+            select_animation_selector_one.css('top', top);
+            select_animation_selector_two.css('left', left);
+            //squareの位置
+            square_selector_two.css('top',top);
+            square_selector_one.css('left', left);
+            //gifの領域
+            if(select_name_rel[1] == 'l'){
+                select_animation_selector_one.css('width', Math.abs(parseInt(square_selector_two.css('left')) - left));
+                select_animation_selector_three.css('width', Math.abs(parseInt(square_selector_two.css('left')) - left));
                 
-//                 select_animation_selector_one.css('left', left + 5);
-//                 select_animation_selector_three.css('left', left);
+                select_animation_selector_one.css('left', left + 5);
+                select_animation_selector_three.css('left', left);
                 
-//                 select_animation_selector_one.css('top', top + 5);
-//             }else{
-//                 select_animation_selector_one.css('width', Math.abs(parseInt(square_selector_two.css('left')) - left));
-//                 select_animation_selector_three.css('width', Math.abs(parseInt(square_selector_two.css('left')) - left));
+                select_animation_selector_one.css('top', top + 5);
+            }else{
+                select_animation_selector_one.css('width', Math.abs(parseInt(square_selector_two.css('left')) - left));
+                select_animation_selector_three.css('width', Math.abs(parseInt(square_selector_two.css('left')) - left));
                 
-//                 select_animation_selector_one.css('top', top + 5);
-//             }
+                select_animation_selector_one.css('top', top + 5);
+            }
             
-//             if(select_name_rel[0] == 't'){
-//                 select_animation_selector_two.css('height', Math.abs(parseInt(square_selector_one.css('top')) - top));
-//                 select_animation_selector_four.css('height', Math.abs(parseInt(square_selector_one.css('top')) - top));
-//                 select_animation_selector_two.css('top', top + 5);
-//                 select_animation_selector_four.css('top', top);
+            if(select_name_rel[0] == 't'){
+                select_animation_selector_two.css('height', Math.abs(parseInt(square_selector_one.css('top')) - top));
+                select_animation_selector_four.css('height', Math.abs(parseInt(square_selector_one.css('top')) - top));
+                select_animation_selector_two.css('top', top + 5);
+                select_animation_selector_four.css('top', top);
                 
-//                 select_animation_selector_two.css('left', left + 5);
-//             }else{
-//                 select_animation_selector_two.css('height', Math.abs(parseInt(square_selector_one.css('top')) - top));
-//                 select_animation_selector_four.css('height', Math.abs(parseInt(square_selector_one.css('top')) - top));
+                select_animation_selector_two.css('left', left + 5);
+            }else{
+                select_animation_selector_two.css('height', Math.abs(parseInt(square_selector_one.css('top')) - top));
+                select_animation_selector_four.css('height', Math.abs(parseInt(square_selector_one.css('top')) - top));
                 
-//                 select_animation_selector_two.css('left', left + 5);
-//             }
-//         }
-//         function search_select_animation_rel(rel){
-//             var name = [
-//                 ['tl','tr'],
-//                 ['bl','br']
-//             ];
-//             var search = [];
-//             for(var i = 0; i < name.length; i++){
-//                 for(var x = 0; x < name[i].length; x++){
-//                     if(name[i][x] == rel){
-//                         search[0] = i;
-//                         search[1] = x;
-//                         return search;
-//                     }
-//                 }
-//             }
-//         }
-//     }//draggable end
+                select_animation_selector_two.css('left', left + 5);
+            }
+        }
+        function search_select_animation_rel(rel){
+            var name = [
+                ['tl','tr'],
+                ['bl','br']
+            ];
+            var search = [];
+            for(var i = 0; i < name.length; i++){
+                for(var x = 0; x < name[i].length; x++){
+                    if(name[i][x] == rel){
+                        search[0] = i;
+                        search[1] = x;
+                        return search;
+                    }
+                }
+            }
+        }
+    }//draggable end
 
     //===============================================
     //createjs canvas class
     //===============================================
-    function Canvas(){
-        this.canvas = document.getElementById('draw_canvas');
+    function Canvas(number){
+        this.canvas = document.getElementById('draw_canvas' + number);
+        this.canvas_id = number;
         this.stage = new createjs.Stage(this.canvas);
+
         this.shape = new createjs.Shape();
+        
         this.tick = createjs.Ticker;
         this.select_color = '';
     
@@ -406,10 +550,11 @@ $(function(){
         this.all_draw_coord = [];
         //サーバーに送るdrawデータ
         this.emit_draw_coord = [];
-    };
-    
+    }
+
     Canvas.prototype.init = function(){
         this.stage.autoClear = false;
+
         this.stage.addChild(this.shape);
 
         //tickイベントの削除のため
@@ -465,6 +610,7 @@ $(function(){
         stage.addEventListener('stagemousedown', mouseDown, false);
 
         function mouseDown(e){
+            console.log(that.canvas_id);
             if(that.select_color !== ''){
                 that.position = {
                     oldX: e.stageX,
@@ -481,12 +627,12 @@ $(function(){
         function mouseMove(e){
             that.position.newX = parseInt(e.stageX);
             that.position.newY = parseInt(e.stageY);
-            console.log(that.select_color);
             that.shape.graphics.clear().setStrokeStyle(5, 'round', 'round').beginStroke(that.select_color).moveTo(that.position.oldX,that.position.oldY).lineTo(that.position.newX,that.position.newY);
             that.emit_draw_coord.push($.extend('true', {}, {
                 newX: that.position.newX,
                 newY: that.position.newY
             }));
+            console.log(that.emit_draw_coord);
             //座標の入れ替え
             that.position.oldX = parseInt(e.stageX);
             that.position.oldY = parseInt(e.stageY);
@@ -496,7 +642,8 @@ $(function(){
             stage.removeEventListener('stagemousemove', mouseMove, false);
             //canvas以外をクリックしても判定されるバグあり
             if(that.emit_draw_coord.length !== 0){
-                socket.emit('send_draw_coord',{XY: that.emit_draw_coord, color: that.select_color});
+                that.emit_draw_coord['0']['color'] = that.select_color;
+                socket.emit('send_draw_coord',{XY: that.emit_draw_coord, number: that.canvas_id});
                 //参照させないように座標をpushする
                 that.all_draw_coord.push($.extend(true, {}, that.emit_draw_coord));
                 //emitしたあとemit_draw_coordの中身を完全に削除し使い回せるようにする
@@ -504,17 +651,15 @@ $(function(){
             }
         }
 
-        // //===============================================
-        // //canvasのyesを押した場合
-        // //===============================================
-        // $('#canvas_area .yes').on({
+        //===============================================
+        //canvasのyesを押した場合
+        //===============================================
+        // $('#create_button').on({
         //     'click': function(){
-        //         stage.removeEventListener('stagemouseup', mouseUp, false);
-        //         stage.removeEventListener('stagemousedown', mouseDown, false);
-        //         that.tick.removeEventListener('tick', that.tickBoundFunc, false);
-
-        //         $('#canvas_area').fadeOut('slow');
-        //         that.create_img('first');
+        //         //stage.removeEventListener('stagemouseup', mouseUp, false);
+        //         //stage.removeEventListener('stagemousedown', mouseDown, false);
+        //         //that.tick.removeEventListener('tick', that.tickBoundFunc, false);
+        //         that.create_img();
         //     }
         // });
     };
@@ -523,32 +668,46 @@ $(function(){
         this.stage.update();
     };
 
-    Canvas.prototype.create_img = function(mode, data){
-        //mode == first 最初にcanvasのyesを押した時
-        if(mode == 'first'){
-            //他の人の画面をロード画面にする
-            socket.emit('broadcast_load');
-        }
+    Canvas.prototype.create_img = function(){
+        // socket.emit('broadcast_load');
         var img = new Image;
         var type = 'image/png';
         img.src = this.canvas.toDataURL(type);
         var dom_img = new Img(img, 0, socket);
+        dom_img.create();
+        // if(mode == 'first'){
+        //     dom_img.create();
+        // }else{
+        //     dom_img.create_second(data);
+        // }
 
-        if(mode == 'first'){
-            dom_img.create();
-        }else{
-            dom_img.create_second(data);
-        }
+
+        //===============================================
+        //create_img backup
+        //===============================================
+        // //mode == first 最初にcanvasのyesを押した時
+        // if(mode == 'first'){
+        //     //他の人の画面をロード画面にする
+        //     socket.emit('broadcast_load');
+        // }
+        // var img = new Image;
+        // var type = 'image/png';
+        // img.src = this.canvas.toDataURL(type);
+        // var dom_img = new Img(img, 0, socket);
+
+        // if(mode == 'first'){
+        //     dom_img.create();
+        // }else{
+        //     dom_img.create_second(data);
+        // }
     };
     
     Canvas.prototype.socket = function(){
         var that = this;
         //送られてきたarrayの座標通り描画する
-        socket.on('draw_canvas', function(data){
-            console.log('testcolor');
-            console.log(data.color);
+        socket.on('draw_canvas' + that.canvas_id, function(data){
             for(var i = 1; i < data.XY.length - 1; i++){
-                  that.shape.graphics.clear().setStrokeStyle(5, 'round', 'round').beginStroke(data.color).moveTo(data.XY[i].newX,data.XY[i].newY).lineTo(data.XY[i+1].newX,data.XY[i+1].newY);
+                  that.shape.graphics.clear().setStrokeStyle(5, 'round', 'round').beginStroke(data.XY['0']['color']).moveTo(data.XY[i].newX,data.XY[i].newY).lineTo(data.XY[i+1].newX,data.XY[i+1].newY);
                   that.stage.update();
             }
             that.all_draw_coord.push($.extend(true, {}, data.XY));

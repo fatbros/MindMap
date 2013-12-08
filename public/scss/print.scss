@@ -262,7 +262,21 @@ nav {
 	
 	canvas {
 			background: #fff;
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			z-index: -1;
+	}
+	canvas:first-child {
+		z-index: 4;
+	}
+
+	#canvas_wrap {
+			position: relative;
+			width: 500px;
+			height: 400px;
 			@include box-shadow(0 0 6px -1px $box_shadow_header);
+
 	}
 	
 	#canvas_topBar {
@@ -317,11 +331,60 @@ nav {
 		@include transition-timing-function(linear); 
 	}
 	#canvas_bottomBar {
-		height: 80px;
+		height: 112px;
 		background: $canvas_bar_back;
-		margin-top: -2px;
 		@include box-shadow(0 0 6px -1px $box_shadow_header);
 		@include border-radius(0 0 10px 10px);
+		#select_color_info {
+			width: 100%;
+			height: 30px;
+			background: $nav_border;
+			#select_color {
+				display: inline-block;
+				vertical-align: top;
+				margin-top: 8px;
+				margin-left: 9px;
+				padding-right: 8px;
+				border-right: 1px solid #7f7f7f;
+				@include box-shadow(1px 0px 0px $nav_shadow);
+				#now_color_box {
+					width: 20px;
+					height: 20px;
+					margin-top: -3px;
+					display: inline-block;
+					vertical-align: top;
+					background: #000;
+					@include border-radius(3px);
+				}
+			}
+			#edit_user {
+				display: inline-block;
+				margin-top: 8px;
+				padding-left: 2px;
+				.edit_user_pic {
+					height: 17px;
+					background: #ccc;
+					margin-top: -4px;
+					margin-left: 8px;
+					margin-right: 4px;
+					padding: 3px;
+					@include border-radius(3px);
+				}
+				span {
+					color: #fff;
+					@include nav_sentence;
+					vertical-align: top;
+				}
+				div {
+					display: inline-block;
+				}
+			}
+			img {
+					display: inline-block;
+					vertical-align: top;
+			}
+		}
+
 		#select_colorBox {
 			width: 248px;
 			height: 60px;
@@ -429,6 +492,197 @@ nav {
 	.userName {
 		background: #ccc;
 	}
+}
+
+/* extend */
+#border_animation{
+    position: absolute;
+    background-image: url(../images/border.gif);
+}
+#square{
+    position: absolute;
+    background-image: url(../images/square.png);
+    width: 10px;
+    height: 10px;
+    background-size: cover;
+    background-color: #fff;
+}
+/* extend */
+
+#confirmation{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(200,200,200,0.8);
+    display: none;
+
+    #loading{
+        display: none;
+        position: absolute;
+        background: white;
+        @include border-radius(10px);
+
+        img{
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            margin-left: -24px;
+        }
+        #message{
+            text-align: center;
+            padding: 64px 10px 10px 10px;
+        }
+    }
+
+    #main_brunch{
+        width: 100%;
+        display: none;
+        text-align: center;
+        textarea{
+            font-size: 14px;
+            margin: 0 auto;
+            height: 24px;
+            padding-top: 9px;
+            margin-top: 30px;
+            border: 1px solid #555;
+            @include border-radius(3px);
+        }
+        .mind_title{
+            width: 70%;
+            display: block;
+        }
+        .main_brunch{
+            width: 40%;
+            display: inline-block;
+        }
+        .enter{
+            display: block;
+            margin: 0 auto;
+            margin-top: 35px;
+            width: 45px;
+
+            padding: 4px 12px 4px 12px;
+            background: #fff;
+            border: 1px solid #aaa;
+            cursor: pointer;
+            @include border-radius(5px);
+            @include transition(0.5s linear);
+            &:hover{
+                @include box-shadow(1px 1px 10px #888);
+            }
+        }
+    }
+}
+
+    
+#img_confirmation{
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    z-index: 100;
+    display: none;
+
+    #select_animation_t{
+        @extend #border_animation;
+        width: 300px;
+        height: 1px;
+        top: 0px;
+    }
+    #select_animation_b{
+        @extend #border_animation;
+        width: 300px;
+        height: 1px;
+        bottom: 0px;
+    }
+    #select_animation_l{
+        @extend #border_animation;
+        width: 1px;
+        height: 300px;
+        left: 0px;
+    }
+    #select_animation_r{
+        @extend #border_animation;
+        width: 1px;
+        height: 300px;
+        right: 0px;
+    }
+    
+    #square_tl{
+        @extend #square;
+        top: -5px;
+        left: -5px;
+    }
+    #square_bl{
+        @extend #square;
+        left: -5px;
+        top: 295px;
+    }
+    #square_br{
+        @extend #square;
+        left: 295px;
+        top: 295px;
+    }
+    #square_tr{
+        @extend #square;
+        top: -5px;
+        left: 295px;
+    }
+    .square{
+        cursor: pointer;
+    }
+    .enter{
+        position: absolute;
+        bottom: -35px;
+        padding: 4px 12px 4px 12px;
+        background: #fff;
+        border: 1px solid #aaa;
+        cursor: pointer;
+        @include border-radius(5px);
+        @include transition(0.5s linear);
+        &:hover{
+            @include box-shadow(1px 1px 10px #888);
+        }
+    }
+}
+
+#main{
+    width: 100%;
+    height: 100%;
+    position: relative;
+    .rad_map{
+        background: #eee;
+        text-align: center;
+        cursor: move;
+        @include border-radius(5px);
+        span{
+            cursor: text;
+        }
+        .plus_l{
+            width: 15px;
+            height: 15px;
+            position: absolute;
+            left: -7px;
+            @include opacity(0);
+            cursor: pointer;
+        }
+        .plus_r{
+            width: 15px;
+            height: 15px;
+            position: absolute;
+            right: -7px;
+            @include opacity(0);
+            cursor: pointer;
+        }
+        .delete{
+            width: 15px;
+            height: 15px;
+            position: absolute;
+            @include opacity(0);
+            cursor: pointer;
+            top: -12px;
+            right: -12px;
+        }
+    }
 }
 
 .clear{

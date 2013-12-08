@@ -12,25 +12,30 @@ Img.prototype.create = function(){
 	var img_confirmation_selector = $('#img_confirmation');
 
 	this.dom_img = $('<img>',{src: this.img.src, id: this.img_id});
-	confirmation_selector.append(this.dom_img);
-	this.dom_img.on('load',function(){
-		$(this).css({
-			'width': '300px',
-			'height': '300px'
-		});
-		that.position_center(confirmation_selector.find('#' + that.img_id));
-		confirmation_selector.fadeIn();
-		img_confirmation_selector.fadeIn();
-	});
+	//トリミング用の画像の生成
+	// confirmation_selector.append(this.dom_img);
+	// this.dom_img.on('load',function(){
+	// 	$(this).css({
+	// 		'width': '300px',
+	// 		'height': '300px'
+	// 	});
+	// 	that.position_center(confirmation_selector.find('#' + that.img_id));
+	// 	confirmation_selector.fadeIn();
+	// 	img_confirmation_selector.fadeIn();
+	// });
+
+	confirmation_selector.fadeIn();
+	img_confirmation_selector.fadeIn();
 	this.enter_menu();
+
 	/*
-$(confirmation_selector.find('#' + that.img_id)).on({
+	$(confirmation_selector.find('#' + that.img_id)).on({
 		'dblclick': function(){
 				that.enter_confirmation();
 				//this.event();		
 				}
-		});
-*/
+	});
+	*/
 };
 
 Img.prototype.create_second = function(data){

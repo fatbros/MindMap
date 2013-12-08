@@ -74,18 +74,6 @@ $(function(){
         canvas_nav.on('mouseleave', end_navColor_animation);
     });
 
-    //canvas number======================
-    var number = $('#canvas_number');
-    number.find('div span').on('click', function(){
-        $(this).parent().find('span').each(function(){
-            $(this).animate({
-                'color': '#fff'
-            });
-        });
-        $(this).animate({
-            'color': '#3e3a39'
-        });
-    });
     //===================================
     
     //ロゴの位置
