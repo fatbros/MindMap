@@ -71,15 +71,12 @@ $(function(){
                 },
                 socket: (function(){
                     function remove(data){
-                        console.log('remove start');
                         //ユーザーの状態の古い情報を削除する
                         //最初は何処のcanvasにも入っていないので
                         if(otherUser_status[data.name].hasOwnProperty('select_canvas_number')){
                             var old_edit_canvas_number = otherUser_status[data.name]['select_canvas_number'];
                             delete canvas_status[old_edit_canvas_number][data.name];
                         }
-                        console.log(otherUser_status);
-                        console.log(canvas_status);
                     }
                     //otherUserがcanvasを変更した時
                     socket.on('otherUser_change_canvas', function(data){
@@ -137,8 +134,19 @@ $(function(){
                             canvas[select_canvas_number].create_img();
                         }
                     });
+                })(),
+                create_img_second: (function(){
+                    $('#create_button_second').on({
+                        'click': function(){
+                            if(!select_canvas_number){
+                                alert('なにも入力されていません');
+                                return;
+                            }
+                            canvas[select_canvas_number].create_img_second();
+                        }
+                    });
                 })()
-
+                //end clojure
             };
         })();
 
@@ -146,7 +154,7 @@ $(function(){
         draggable_square();
 
         //loginボタンを押した時
-        $('#loginButton').on({
+        $('#loginWrap .loginButton').on({
             'click': function(){
                 var user_name = $('#form_name').val();
                 if(user_name !== ""){
@@ -158,6 +166,9 @@ $(function(){
                     $('#loginForm').fadeOut('normal', function(){
                         $(this).remove();
                         $('#side, #other_user_login').fadeIn();
+
+                        //over_scrollWrapのz-indexを変更させる
+                        $('#over_scrollWrap').css('z-index', '-5');
                     });
                 }else{
                     alert('なにも入力されていません');
@@ -172,7 +183,6 @@ $(function(){
         //ログイン　ログアウト
         //===============================================
         socket.on('login_message',function(data){
-            
             //===============================================
             //other_user_loginの更新
             //===============================================
@@ -221,178 +231,226 @@ $(function(){
         //ローディング
         //===============================================
         socket.on('loading',function(data){
-            var confirmation_selector = $('#confirmation');
-            var loading_selector = confirmation_selector.find('#loading');
-            confirmation_selector.css('z-index','999').fadeIn();
-            loading_selector.fadeIn();
-            $('#canvas_area').fadeOut();
-            //add message
+            var loading = $('<div>', {class: 'loading'});
+            var loading_img = $('<img>', {src: '/images/loading.gif'});
+            var message = $('<div>', {class: 'message'});
+            var loading_back = $('<div>', {class: 'loading_back'});
+
+            //append
             var p = $('<p>',{text: data.name + data.message});
             var p2 = $('<p>', {text: '少々お待ちください'});
-            loading_selector.find('#message').append(p).append(p2);
-            position_center(loading_selector);
+            message.append(p).append(p2);
+            loading.append(loading_img).append(message);
+            loading_back.append(loading);
+
+            $('#draw_canvas' + data.number).append(loading_back);
+
+            position_center(loading);
         });
-//         //===============================================
-//         //ローディング end
-//         //===============================================
-//         socket.on('end_loading',function(data){
-//             var confirmation_selector = $('#confirmation');
-//             var loading_selector = confirmation_selector.find('#loading');
-//             confirmation_selector.css('z-index', '0').fadeOut('fast', function(){
-//                 loading_selector.css('display','none')
-//                 .find('#message p').remove();
-//             });//fadeout callback
-//             canvas.create_img('second', data);
-//         });
-//         //===============================================
-//         //メインブランチを作成する時
-//         //===============================================
-//         socket.on('main_brunch_create', function(){
-//             var confirmation_selector = $('#confirmation');
-//             $('#main_brunch').fadeIn();
-//             confirmation_selector.css({
-//                 'background': 'rgba(50,50,50,0.7)'
-//             }).fadeIn();
-//             //ブランチの編集
-//             brunch(socket);
-//         });
-//         //ブランチtextareaを誰かが編集した時
-//         socket.on('change_brunch_val', function(data){
-//             //data val data num
-//             $('#main_brunch textarea:eq(' + data.num + ')').val(data.val);
-//         });
-//         //===============================================
-//         //メインブランチ編集終了
-//         //===============================================
-//         socket.on('main_brunch_end', function(){
-//             var brunch = [];
-//             $('#confirmation').fadeOut().find('#main_brunch').fadeOut();
-//             var push = main_brunch_enter(brunch);
-//             if(push === true){
-//                 create_first_brunch(brunch);
-//             }
-//         });
+        //===============================================
+        //ローディング end
+        //===============================================
+        socket.on('end_loading',function(data){
+            //data square dom_img_pos overflow_div_pos access_num canvas_num
+            var img = new Image;
+            var type = 'image/png';
+            var _canvas = document.getElementById('main_canvas' + data.canvas_num);
+            img.src = _canvas.toDataURL(type);
+            //img_accessにimg_seconduserオブジェクトを参照させる。
+            img_access[data.access_num] = new Img_secondUser(data, img, socket);
+            img_access[data.access_num].create();
 
+            //canvasの描画データの削除
+            console.log(canvas);
+            canvas[data.canvas_num].delete_canvas();
 
+            //loadingの削除
+            $('#draw_canvas' + data.canvas_num).find('.loading_back').remove();
+        });
+        //===============================================
+        //otheruserが画像を移動したとき
+        //===============================================
+        socket.on('move_img', function(data){
+            img_access[data.id].img_move(data.img_pos.t, data.img_pos.l);
+        });
 
-//         //===============================================
-//         //ブランチの編集　elementの座標移動
-//         //===============================================
-//         socket.on('drag_element', function(data){
-//             console.log(access);
-//             console.log(data);
-//             var element = access[data.id];
-//             element.id_select.css({
-//                 'top': data.t,
-//                 'left': data.l
-//             });
-//             element.whtl.t = data.t;
-//             element.whtl.l = data.l;
-//             element.img_center();
-//             element.svg_position_down();
+        //===============================================
+        //メインブランチを作成する時
+        //===============================================
+        socket.on('main_brunch_create', function(){
+            //次にimgを生成するときはcreate_button_secondから
+            $('#create_button').remove();
 
-//             if(data.main_or_sub === 'sub'){
-//                 element.svg.svg.position(1);
-//             }
-//         });
-//         //===============================================
-//         //ブランチ編集　subElementの生成
-//         //===============================================
-//         socket.on('subElement_create', function(data){
-//             var subElement = access[data.id];
-//             console.log('==========================');
-//             console.log(data);
-//             console.log(access);
-//             subElement.element_new_create(data.rl, data.val, false);
-//         });
+            var canvas_nav = $('ul #canvas');
+            var confirmation_selector = $('#confirmation');
+           
+            nav_animation.off_navColor_animation(canvas_nav);
+
+            $('#over_scrollWrap').css('z-index', '5');
+            $('#main_brunch').fadeIn();
+            confirmation_selector.fadeIn();
+
+            //ブランチの編集
+            brunch(socket);
+        });
+        //ブランチtextareaを誰かが編集した時
+        socket.on('change_brunch_val', function(data){
+            //data val data num
+            $('#main_brunch input:eq(' + data.num + ')').val(data.val);
+        });
+        //===============================================
+        //メインブランチ編集終了
+        //===============================================
+        socket.on('main_brunch_end', function(){
+            var brunch = [];
+            $('#confirmation').fadeOut().find('#main_brunch').fadeOut();
+            var push = main_brunch_enter(brunch);
+            if(push === true){
+                create_first_brunch(brunch);
+            }
+        });
+
+        //===============================================
+        //ブランチの編集　elementの座標移動
+        //===============================================
+        socket.on('drag_element', function(data){
+            var element = access[data.id];
+            element.id_select.css({
+                'top': data.t,
+                'left': data.l
+            });
+            element.whtl.t = data.t;
+            element.whtl.l = data.l;
+            element.img_center();
+            element.svg_position_down();
+
+            if(data.main_or_sub === 'sub'){
+                element.svg.svg.position(1);
+            }
+        });
+        //===============================================
+        //ブランチ編集　subElementの生成
+        //===============================================
+        socket.on('subElement_create', function(data){
+            var subElement = access[data.id];
+            subElement.element_new_create(data.rl, data.val, false);
+        });
+
+        socket.on('subElement_brunchEdit', function(data){
+            access[data.id].otherUser_edit(data.val);
+        });
+
+        //===============================================
+        //ブランチの削除
+        //===============================================
+        socket.on('delete_element', function(data){
+            access[data.id].search_delete_element();
+        });
+        //===============================================
+        //ブランチ star
+        //===============================================
+        socket.on('sub_menu_change', function(data){
+            access[data.id]['otherUser_menu_change'](data.menu);
+        });
+
     }//init end
 
-//     //===============================================
-//     //title create
-//     //===============================================
-//     function brunch(socket){
-//         var brunch = [];
-//         $('#main_brunch textarea').on({
-//             'change keyup': function(){
-//                 var val = $(this).val();
-//                 var num = $(this).attr('num');
-//                 socket.emit('broadcast_main_brunch', {val: val, num: num});
-//             }
-//         });
-//         //textareaのenterを押した時
-//         $('#main_brunch .enter').on({
-//             'click': function(){
-//                 var push = main_brunch_enter(brunch);
-//                 if(push === true){
-//                     //broadcastでmain brunchの終了を送る
-//                     socket.emit('broadcast_main_brunch_end');
-//                     $('#confirmation').fadeOut().find('#main_brunch').fadeOut();
-//                     create_first_brunch(brunch);
-//                 }
-//             }
-//         });
-//     }
+    //===============================================
+    //title create
+    //===============================================
+    function brunch(socket){
+        var brunch = [];
+        $('#main_brunch input').on({
+            'change keyup': function(){
+                var val = $(this).val();
+                var num = $(this).attr('num');
+                socket.emit('broadcast_main_brunch', {val: val, num: num});
+            }
+        });
+        //textareaのenterを押した時
+        $('#main_brunch .loginButton').on({
+            'click': function(){
+                var push = main_brunch_enter(brunch);
+                if(push === true){
+                    //broadcastでmain brunchの終了を送る
+                    socket.emit('broadcast_main_brunch_end');
+                    $('#confirmation').fadeOut().find('#main_brunch').fadeOut();
+                    create_first_brunch(brunch);
+                }
+            }
+        });
+    }
 
-//     function create_first_brunch(brunch){
-//         //======================================
-//         //main elementの生成
-//         //======================================
-//         var element_local = new Element(n_val(brunch[0]), socket);
-//         element_local.create();
-//         element.push(element_local);
+    //textareaの中身の確認と挿入
+    function main_brunch_enter(obj){
+        for(var i = 0; i < 5; i++){
+            //全てのtextareaに文字が埋まってない場合
+            if($('#main_brunch input:eq(' + i + ')').val() === ""){
+                alert('文字が入力されていないところがあります。');
+                obj.splice(0, 4);
+                return false;
+            }else{
+                obj.push($('#main_brunch input:eq(' + i + ')').val());
+                if(i == '4'){
+                    return true;
+                }
+            }
+        }
+    }
 
-//         //mainElementのselector
-//         var element_selector = element[0].id_select;
-//         position_center(element_selector);
+    function create_first_brunch(brunch){
+        var brunch_nav = $('ul #brunch');
+        $('#over_scrollWrap').css('z-index', '-5');
+        nav_animation.on_navColor_animation(brunch_nav);
+        //======================================
+        //main elementの生成
+        //======================================
+        var element_local = new Element(n_val(brunch[0]), socket);
+        element_local.create();
+        element.push(element_local);
 
-//         //座標の再取得
-//         element[0].whtl.t = parseInt($(element_selector).css('top'));
-//         element[0].whtl.l = parseInt($(element_selector).css('left'));
-//         element[0].img_center();
-//         element[0].svg_position_down();
+        //mainElementのselector
+        var element_selector = element[0].id_select;
+        position_center(element_selector);
 
-//         //main_brunchの生成
-//         var rl = ['R','R','L','L'];
-//         for(var i = 1; i < brunch.length; i++){
-//             //mainエレメントのみ
-//             element[0].element_new_create(rl[i-1], brunch[i]);
-//         }
-//         $('textarea').blur();
+        //座標の再取得
+        element[0].whtl.t = parseInt($(element_selector).css('top'));
+        element[0].whtl.l = parseInt($(element_selector).css('left'));
+        element[0].img_center();
+        element[0].svg_position_down();
 
-//         function n_val(val){
-//             var Val = val;
-//             //=============================================
-//             //まず改行らしき文字を\nに統一。\r、\r\n → \n
-//             //=============================================
-//             Val = Val.replace(/\r\n/g, '\n');
-//             Val = Val.replace(/\r/g, '\n');
-//             var lines = Val.split('\n');
-//             //=============================================
-//             //splitした配列を送り、インスタンスを生成する
-//             //=============================================
-//             var setting = {
-//                 lines: lines
-//             };
-//             return setting;
-//         }
-//     }
+        //main_brunchの生成
+        var rl = ['R','R','L','L'];
+        var color = {
+           1: '#e87ea5',
+           2: '#8ac233',
+           3: '#f08d5b',
+           4: '#41babc'
+        };
+        for(var i = 1; i < brunch.length; i++){
+            //mainエレメントのみ
+            element[0].element_new_create(rl[i-1], brunch[i], false, color[i]);
+        }
+        center_scroll();
+        $('textarea').blur();
 
-//     //textareaの中身の確認と挿入
-//     function main_brunch_enter(obj){
-//         for(var i = 0; i < 5; i++){
-//             //全てのtextareaに文字が埋まってない場合
-//             if($('#main_brunch textarea:eq(' + i + ')').val() === ""){
-//                 alert('文字が入力されていないところがあります。');
-//                 obj.splice(0, 4);
-//                 return false;
-//             }else{
-//                 obj.push($('#main_brunch textarea:eq(' + i + ')').val());
-//                 if(i == '4'){
-//                     return true;
-//                 }
-//             }
-//         }
-//     }
+        function n_val(val){
+            var Val = val;
+            //=============================================
+            //まず改行らしき文字を\nに統一。\r、\r\n → \n
+            //=============================================
+            Val = Val.replace(/\r\n/g, '\n');
+            Val = Val.replace(/\r/g, '\n');
+            var lines = Val.split('\n');
+            //=============================================
+            //splitした配列を送り、インスタンスを生成する
+            //=============================================
+            var setting = {
+                lines: lines
+            };
+            return setting;
+        }
+    }
 
     //===============================================
     //center position
@@ -531,7 +589,7 @@ $(function(){
     //createjs canvas class
     //===============================================
     function Canvas(number, access_img){
-        this.canvas = document.getElementById('draw_canvas' + number);
+        this.canvas = document.getElementById('main_canvas' + number);
         this.canvas_id = number;
         //imgのハッシュ
         this.access_img = access_img;
@@ -649,18 +707,6 @@ $(function(){
                 that.emit_draw_coord.splice(0,that.emit_draw_coord.length);
             }
         }
-
-        //===============================================
-        //canvasのyesを押した場合
-        //===============================================
-        // $('#create_button').on({
-        //     'click': function(){
-        //         //stage.removeEventListener('stagemouseup', mouseUp, false);
-        //         //stage.removeEventListener('stagemousedown', mouseDown, false);
-        //         //that.tick.removeEventListener('tick', that.tickBoundFunc, false);
-        //         that.create_img();
-        //     }
-        // });
     };
     
     Canvas.prototype.handleTick = function() {
@@ -669,15 +715,27 @@ $(function(){
 
     Canvas.prototype.create_img = function(){
         if($('#img_confirmation').css('display') === 'none'){
-            socket.emit('broadcast_load');
+            socket.emit('broadcast_load', {number: this.canvas_id});
             var img = new Image;
             var type = 'image/png';
             img.src = this.canvas.toDataURL(type);
             var access_length = Object.keys(this.access_img).length;
 
-            this.access_img[access_length] = new Img(img, access_length, socket, this.delete_canvas.bind(this));
+            this.access_img[access_length] = new Img(img, access_length, socket, this.delete_canvas.bind(this), this.canvas_id, 'main_brunch');
             this.access_img[access_length].create();
-            console.log(this.access_img);
+        }
+    };
+
+    Canvas.prototype.create_img_second = function(){
+        if($('#img_confirmation').css('display') === 'none'){
+            socket.emit('broadcast_load', {number: this.canvas_id});
+            var img = new Image;
+            var type = 'image/png';
+            img.src = this.canvas.toDataURL(type);
+            var access_length = Object.keys(this.access_img).length;
+
+            this.access_img[access_length] = new Img(img, access_length, socket, this.delete_canvas.bind(this), this.canvas_id);
+            this.access_img[access_length].create();
         }
     };
 

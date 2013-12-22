@@ -10,10 +10,7 @@ li {
 header {
   width: 100%;
   height: 7%;
-  background: #eeeeee;
-  -webkit-box-shadow: 0 2px 2px #aaaaaa;
-  -moz-box-shadow: 0 2px 2px #aaaaaa;
-  box-shadow: 0 2px 2px #aaaaaa; }
+  background: #eeeeee; }
 
 #logo {
   height: 100%;
@@ -30,10 +27,12 @@ header {
   display: -webkit-box;
   display: -moz-box;
   display: -ms-box;
-  display: box; }
+  display: box;
+  position: relative; }
 
 #main {
   width: 100%;
+  min-width: 400px;
   height: 100%;
   -webkit-box-flex: 1;
   -moz-box-flex: 1;
@@ -41,6 +40,17 @@ header {
   box-flex: 1;
   overflow: auto;
   position: relative; }
+
+#scrollWrap {
+  width: 5000px;
+  height: 5000px;
+  position: absolute; }
+
+#over_scrollWrap {
+  position: absolute;
+  top: 0px;
+  left: 160px;
+  overflow: auto; }
 
 #loginWrap {
   width: 100%;
@@ -83,17 +93,17 @@ header {
   font-family: "Raleway", "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   font-weight: 200; }
 
-#form_bottom {
+.form_bottom {
   background: #41babc;
   height: 50px;
   width: 400px;
   display: table; }
 
-#loginButton_box {
+.loginButton_box {
   display: table-cell;
   vertical-align: middle; }
 
-#loginButton {
+.loginButton {
   color: #fff;
   text-align: center;
   display: block;
@@ -171,6 +181,7 @@ header {
 
 nav {
   width: 100%;
+  margin-top: 15px;
   font-family: "Raleway", "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   font-weight: 200; }
   nav ul li:first-child {
@@ -211,18 +222,45 @@ nav {
     background-image: url(../images/canvas.png);
     margin-top: -5px; }
 
+.loading_back {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  background: #c9c9c9;
+  font-family: Helvetica, Arial, 'Hiragino Kaku Gothic ProN', 'ヒラギノ角ゴ ProN W3', Meiryo, メイリオ, sans-serif;
+  font-size: 0.8em; }
+  .loading_back .loading {
+    position: absolute;
+    background: white;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    -ms-border-radius: 3px;
+    -o-border-radius: 3px;
+    border-radius: 3px; }
+    .loading_back .loading img {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      margin-left: -24px; }
+    .loading_back .loading .message {
+      text-align: center;
+      padding: 64px 10px 10px 10px; }
+
 #canvas_area {
   width: 500px;
   position: absolute;
   left: -500px;
-  opacity: 0; }
-  #canvas_area canvas {
+  opacity: 0;
+  z-index: -5; }
+  #canvas_area #draw_canvas0, #canvas_area #draw_canvas1, #canvas_area #draw_canvas2, #canvas_area #draw_canvas3 {
     background: #fff;
     position: absolute;
     top: 0px;
     left: 0px;
     z-index: -1; }
-  #canvas_area canvas:first-child {
+  #canvas_area #draw_canvas0 {
     z-index: 4; }
   #canvas_area #canvas_wrap {
     position: relative;
@@ -267,7 +305,7 @@ nav {
       top: 3px;
       left: 3px;
       cursor: pointer; }
-    #canvas_area #canvas_topBar #create_button {
+    #canvas_area #canvas_topBar #create_button, #canvas_area #canvas_topBar #create_button_second {
       height: 20px;
       position: absolute;
       right: 11px;
@@ -545,12 +583,12 @@ nav {
   #other_user_login .userName {
     background: #ccc; }
 
-#img {
+#img, #svg, #brunch_area {
   position: absolute;
   top: 0px;
   left: 0px;
-  width: 100%;
-  height: 100%;
+  width: 5000px;
+  height: 5000px;
   z-index: -1; }
 
 /* extend */
@@ -571,69 +609,32 @@ nav {
   position: absolute;
   width: 100%;
   height: 100%;
-  background: rgba(200, 200, 200, 0.8);
+  background: rgba(20, 20, 20, 0.9);
   display: none; }
-  #confirmation #loading {
-    display: none;
-    position: absolute;
-    background: white;
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
-    -ms-border-radius: 10px;
-    -o-border-radius: 10px;
-    border-radius: 10px; }
-    #confirmation #loading img {
-      position: absolute;
-      top: 10px;
-      left: 50%;
-      margin-left: -24px; }
-    #confirmation #loading #message {
-      text-align: center;
-      padding: 64px 10px 10px 10px; }
   #confirmation #main_brunch {
     width: 100%;
     display: none;
     text-align: center; }
-    #confirmation #main_brunch textarea {
-      font-size: 14px;
-      margin: 0 auto;
-      height: 24px;
-      padding-top: 9px;
-      margin-top: 30px;
-      border: 1px solid #555;
-      -webkit-border-radius: 3px;
-      -moz-border-radius: 3px;
-      -ms-border-radius: 3px;
-      -o-border-radius: 3px;
-      border-radius: 3px; }
+    #confirmation #main_brunch img {
+      display: block;
+      margin: 3em auto 1em auto;
+      width: 200px; }
     #confirmation #main_brunch .mind_title {
       width: 70%;
-      display: block; }
+      display: block;
+      padding: 10px;
+      margin: 0 auto;
+      font-family: "Raleway", "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+      font-weight: 200;
+      font-size: 1em; }
     #confirmation #main_brunch .main_brunch {
       width: 40%;
-      display: inline-block; }
-    #confirmation #main_brunch .enter {
-      display: block;
-      margin: 0 auto;
-      margin-top: 35px;
-      width: 45px;
-      padding: 4px 12px 4px 12px;
-      background: #fff;
-      border: 1px solid #aaa;
-      cursor: pointer;
-      -webkit-border-radius: 5px;
-      -moz-border-radius: 5px;
-      -ms-border-radius: 5px;
-      -o-border-radius: 5px;
-      border-radius: 5px;
-      -webkit-transition: 0.5s linear;
-      -moz-transition: 0.5s linear;
-      -o-transition: 0.5s linear;
-      transition: 0.5s linear; }
-      #confirmation #main_brunch .enter:hover {
-        -webkit-box-shadow: 1px 1px 10px #888888;
-        -moz-box-shadow: 1px 1px 10px #888888;
-        box-shadow: 1px 1px 10px #888888; }
+      padding: 8px;
+      margin-bottom: 1.5em;
+      display: inline-block;
+      font-family: "Raleway", "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+      font-weight: 200;
+      font-size: 1em; }
 
 #img_confirmation {
   position: absolute;
@@ -678,46 +679,133 @@ nav {
     margin-left: -50px;
     cursor: pointer; }
 
-#main {
-  width: 100%;
+.rad_map {
+  min-width: 100px;
+  color: #fff;
+  text-align: center;
+  cursor: move;
+  -webkit-border-radius: 7px;
+  -moz-border-radius: 7px;
+  -ms-border-radius: 7px;
+  -o-border-radius: 7px;
+  border-radius: 7px; }
+  .rad_map span {
+    cursor: text;
+    font-family: "Raleway", "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+    font-weight: 200;
+    letter-spacing: 0.1em; }
+  .rad_map .plus_l {
+    left: -7px;
+    width: 15px;
+    height: 15px;
+    position: absolute;
+    cursor: pointer;
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+    opacity: 0; }
+  .rad_map .plus_r {
+    right: -7px;
+    width: 15px;
+    height: 15px;
+    position: absolute;
+    cursor: pointer;
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+    opacity: 0; }
+  .rad_map .delete {
+    width: 15px;
+    height: 15px;
+    position: absolute;
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+    opacity: 0;
+    cursor: pointer;
+    top: -12px;
+    right: -12px; }
+
+.central {
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -o-border-radius: 5px;
+  border-radius: 5px;
+  background: #fff;
+  border: 5px solid #666;
+  text-align: center;
+  cursor: move; }
+  .central span {
+    cursor: text; }
+  .central .central_img_l {
+    width: 15px;
+    height: 15px;
+    position: absolute;
+    cursor: pointer;
+    left: -14px; }
+  .central .central_img_r {
+    width: 15px;
+    height: 15px;
+    position: absolute;
+    cursor: pointer;
+    right: -14px; }
+
+.sub_menu {
+  width: inherit;
+  height: 20px;
+  position: absolute;
+  -webkit-border-radius: 0 0 7px 7px;
+  -moz-border-radius: 0 0 7px 7px;
+  -ms-border-radius: 0 0 7px 7px;
+  -o-border-radius: 0 0 7px 7px;
+  border-radius: 0 0 7px 7px;
+  background-color: #fff;
+  border: 3px solid;
+  overflow: auto;
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+  opacity: 0; }
+
+.sub_menu_click_after {
+  -webkit-box-shadow: 0px 0px 5px 2px #adabab inset;
+  -moz-box-shadow: 0px 0px 5px 2px #adabab inset;
+  box-shadow: 0px 0px 5px 2px #adabab inset; }
+
+.star_menu, .bold_menu, .backgroundcolor_menu {
+  display: inline-block;
+  width: 20px;
   height: 100%;
-  position: relative; }
-  #main .rad_map {
-    background: #eee;
-    text-align: center;
-    cursor: move;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    -ms-border-radius: 5px;
-    -o-border-radius: 5px;
-    border-radius: 5px; }
-    #main .rad_map span {
-      cursor: text; }
-    #main .rad_map .plus_l {
-      width: 15px;
-      height: 15px;
-      position: absolute;
-      left: -7px;
-      filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
-      opacity: 0;
-      cursor: pointer; }
-    #main .rad_map .plus_r {
-      width: 15px;
-      height: 15px;
-      position: absolute;
-      right: -7px;
-      filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
-      opacity: 0;
-      cursor: pointer; }
-    #main .rad_map .delete {
-      width: 15px;
-      height: 15px;
-      position: absolute;
-      filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
-      opacity: 0;
-      cursor: pointer;
-      top: -12px;
-      right: -12px; }
+  background-color: #c9c9ca;
+  border-right: 1px solid #adabab;
+  border-left: 1px solid #adabab;
+  cursor: pointer;
+  -webkit-transition-property: box-shadow;
+  -moz-transition-property: box-shadow;
+  -o-transition-property: box-shadow;
+  transition-property: box-shadow;
+  -webkit-transition-duration: 0.3s;
+  -moz-transition-duration: 0.3s;
+  -o-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+  -webkit-transition-timing-function: linear;
+  -moz-transition-timing-function: linear;
+  -o-transition-timing-function: linear;
+  transition-timing-function: linear; }
+
+.star_menu {
+  background-image: url(/images/star.png);
+  background-repeat: no-repeat;
+  background-size: 15px;
+  background-position: 2.5px 3px; }
+
+.star_before:before {
+  content: '';
+  width: 15px;
+  height: 15px;
+  position: absolute;
+  left: 1px;
+  background-image: url(/images/star.png);
+  background-size: 15px; }
+
+.bold_menu {
+  background-image: url(/images/bold.png);
+  background-repeat: no-repeat;
+  background-size: 15px;
+  background-position: 3px 3.5px; }
 
 .clear {
   clear: both; }

@@ -62,9 +62,9 @@ SVG.prototype.create = function(){
 
 SVG.prototype.attr = function(){
 	this.line.attr({
-		'stroke': '#CD5C5C',
-		'stroke-width': 3,
-		'stroke-dasharray': '--.',
+		'stroke': this.element.color,
+		'stroke-width': 8
+		//'stroke-dasharray': '--.',
 		//'stroke-linecap': 'round',
 		//'stroke-linejoin': 'round'
 	});

@@ -34,6 +34,11 @@ $black: #3e3a39;
  	font-family: "Raleway","HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue",Helvetica,Arial,"Lucida Grande",sans-serif
  }
 
+ @mixin Raleway_200 {
+ 	@include Raleway;
+ 	font-weight: 200;
+ }
+
 html, body {
 	height: 100%;
 }
@@ -46,7 +51,6 @@ header {
 	width: 100%;
 	height: 7%;
 	background: $gray_back;
-	@include box-shadow(0 2px 2px $box-shadow-header);
 }
 
 #logo {
@@ -64,14 +68,29 @@ header {
 	height: 93%;
 	overflow: auto;
 	@include display-box;
+	position: relative;
 }
 
 #main {
 	width: 100%;
+	min-width: 400px;
 	height: 100%;
 	@include box-flex(1);
 	overflow: auto;
 	position: relative;
+}
+
+#scrollWrap {
+	width: 5000px;
+	height: 5000px;
+	position: absolute;
+}
+
+#over_scrollWrap {
+	position: absolute;
+	top: 0px;
+	left: 160px;
+	overflow: auto;
 }
 
 #loginWrap {
@@ -91,9 +110,6 @@ header {
 	margin-left: -200px;
 	@include border-radius(3px);
 	@include Raleway;
-}
-
-#loginForm_start {
 }
 
 #form_pic {
@@ -116,23 +132,22 @@ header {
 	height: 66px;
 	margin: 0;
 	padding: 0;
-	@include Raleway;
-	font-weight: 200;
+	@include Raleway_200;
 }
 
-#form_bottom {
+.form_bottom {
 	background: $blue;
 	height: 50px;
 	width: 400px;
 	display: table;
 }
 
-#loginButton_box {
+.loginButton_box {
 	display: table-cell;
 	vertical-align: middle;
 }
 
-#loginButton {
+.loginButton {
 	color: #fff;
 	text-align: center;
 	display: block;
@@ -202,8 +217,8 @@ header {
 
 nav {
 	width: 100%;
-	@include Raleway;
-	font-weight: 200;
+	margin-top: 15px;
+	@include Raleway_200;
 
 	ul {
 		li:first-child {
@@ -254,20 +269,50 @@ nav {
 	}
 }
 
+.loading_back {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	background: $canvas_bar_back;
+
+	@include nav_sentence;
+
+	.loading{
+	    position: absolute;
+	    background: white;
+	    @include border-radius(3px);
+
+	    img{
+	        position: absolute;
+	        top: 10px;
+	        left: 50%;
+	        margin-left: -24px;
+	    }
+	    .message{
+	        text-align: center;
+	        padding: 64px 10px 10px 10px;
+	    }
+	}
+
+}
+
 #canvas_area{
 	width: 500px;
 	position: absolute;
 	left: -500px;
 	opacity: 0;
+	z-index: -5;
 	
-	canvas {
+	#draw_canvas0, #draw_canvas1, #draw_canvas2, #draw_canvas3 {
 			background: #fff;
 			position: absolute;
 			top: 0px;
 			left: 0px;
 			z-index: -1;
 	}
-	canvas:first-child {
+	#draw_canvas0 {
 		z-index: 4;
 	}
 
@@ -314,7 +359,7 @@ nav {
 			left: 3px;
 			cursor: pointer;
 		}
-		#create_button {
+		#create_button, #create_button_second {
 			height: 20px;
 			position: absolute;
 			right: 11px;
@@ -450,7 +495,7 @@ nav {
 			}
 		}
 
-		.eraser_click_after{
+		.eraser_click_after {
 			@include box-shadow(1px 1px 16px -2px #444444 inset);
 		}
 		#eraser {
@@ -494,21 +539,21 @@ nav {
 	}
 }
 
-#img{
+#img, #svg, #brunch_area {
     position: absolute;
     top: 0px;
     left: 0px;
-    width: 100%;
-    height: 100%;
+    width: 5000px;
+    height: 5000px;
     z-index: -1;
 }
 
 /* extend */
-#border_animation{
+#border_animation {
     position: absolute;
     background-image: url(../images/border.gif);
 }
-#square{
+#square {
     position: absolute;
     background-image: url(../images/square.png);
     width: 10px;
@@ -518,115 +563,87 @@ nav {
 }
 /* extend */
 
-#confirmation{
+#confirmation {
     position: absolute;
     width: 100%;
     height: 100%;
-    background: rgba(200,200,200,0.8);
+    background: rgba(20,20,20,0.9);
     display: none;
 
-    #loading{
-        display: none;
-        position: absolute;
-        background: white;
-        @include border-radius(10px);
-
-        img{
-            position: absolute;
-            top: 10px;
-            left: 50%;
-            margin-left: -24px;
-        }
-        #message{
-            text-align: center;
-            padding: 64px 10px 10px 10px;
-        }
-    }
-
-    #main_brunch{
+    #main_brunch {
         width: 100%;
         display: none;
         text-align: center;
-        textarea{
-            font-size: 14px;
-            margin: 0 auto;
-            height: 24px;
-            padding-top: 9px;
-            margin-top: 30px;
-            border: 1px solid #555;
-            @include border-radius(3px);
+
+        img {
+        	display: block;
+        	margin: 3em auto 1em auto;
+        	width: 200px;
         }
-        .mind_title{
+
+        .mind_title {
             width: 70%;
             display: block;
+            padding: 10px;
+            margin:  0 auto;
+            @include Raleway_200;
+            font-size: 1em;
         }
-        .main_brunch{
-            width: 40%;
+        .main_brunch {
+        	width: 40%;
+        	padding: 8px;
+        	margin-bottom: 1.5em;
             display: inline-block;
-        }
-        .enter{
-            display: block;
-            margin: 0 auto;
-            margin-top: 35px;
-            width: 45px;
-
-            padding: 4px 12px 4px 12px;
-            background: #fff;
-            border: 1px solid #aaa;
-            cursor: pointer;
-            @include border-radius(5px);
-            @include transition(0.5s linear);
-            &:hover{
-                @include box-shadow(1px 1px 10px #888);
-            }
+            @include Raleway_200;
+            font-size: 1em;
         }
     }
 }
 
     
-#img_confirmation{
+#img_confirmation {
     position: absolute;
     width: 300px;
     height: 300px;
     z-index: 100;
     display: none;
 
-    #select_animation_t{
+    #select_animation_t {
         @extend #border_animation;
         width: 300px;
         height: 1px;
         top: 0px;
     }
-    #select_animation_b{
+    #select_animation_b {
         @extend #border_animation;
         width: 300px;
         height: 1px;
         bottom: 0px;
     }
-    #select_animation_l{
+    #select_animation_l {
         @extend #border_animation;
         width: 1px;
         height: 300px;
         left: 0px;
     }
-    #select_animation_r{
+    #select_animation_r {
         @extend #border_animation;
         width: 1px;
         height: 300px;
         right: 0px;
     }
     
-    #square_tl{
+    #square_tl {
         @extend #square;
         top: -5px;
         left: -5px;
     }
-    #square_bl{
+    #square_bl {
         @extend #square;
         left: -5px;
         top: 295px;
     }
-    #square_br{
+    #square_br {
         @extend #square;
         left: 295px;
         top: 295px;
@@ -636,7 +653,7 @@ nav {
         top: -5px;
         left: 295px;
     }
-    .square{
+    .square {
         cursor: pointer;
     }
     .end_trim {
@@ -648,46 +665,119 @@ nav {
     }
 }
 
-#main{
-    width: 100%;
-    height: 100%;
-    position: relative;
-    .rad_map{
-        background: #eee;
-        text-align: center;
-        cursor: move;
-        @include border-radius(5px);
-        span{
-            cursor: text;
-        }
-        .plus_l{
-            width: 15px;
-            height: 15px;
-            position: absolute;
-            left: -7px;
-            @include opacity(0);
-            cursor: pointer;
-        }
-        .plus_r{
-            width: 15px;
-            height: 15px;
-            position: absolute;
-            right: -7px;
-            @include opacity(0);
-            cursor: pointer;
-        }
-        .delete{
-            width: 15px;
-            height: 15px;
-            position: absolute;
-            @include opacity(0);
-            cursor: pointer;
-            top: -12px;
-            right: -12px;
-        }
+@mixin plus_img {
+	width: 15px;
+    height: 15px;
+    position: absolute;
+    cursor: pointer;
+}
+
+.rad_map {
+	min-width: 100px;
+	color: #fff;
+    text-align: center;
+    cursor: move;
+    @include border-radius(7px);
+    span{
+        cursor: text;
+        @include Raleway_200;
+        letter-spacing: 0.1em;
+    }
+    .plus_l {
+        left: -7px;
+        @include plus_img;
+        @include opacity(0);
+    }
+    .plus_r {
+        right: -7px;
+        @include plus_img;
+        @include opacity(0);
+    }
+    .delete {
+        width: 15px;
+        height: 15px;
+        position: absolute;
+        @include opacity(0);
+        cursor: pointer;
+        top: -12px;
+        right: -12px;
     }
 }
 
-.clear{
+.central {
+	@include border-radius(5px);
+	background: #fff;
+	border: 5px solid #666;
+	text-align: center;
+    cursor: move;
+	span{
+        cursor: text;
+    }
+    .central_img_l {
+    	@include plus_img;
+    	left: -14px;
+    }
+    .central_img_r {
+    	@include plus_img;
+    	right: -14px;
+    }
+}
+
+.sub_menu {
+	width: inherit;
+	height: 20px;
+	position: absolute;
+	@include border-radius(0 0 7px 7px);
+	background-color: #fff;
+	border: 3px solid;
+	overflow: auto;
+	@include opacity(0);
+}
+
+@mixin sub_menu {
+	display: inline-block;
+	width: 20px;
+	height: 100%;
+	background-color: #c9c9ca;
+	border-right: 1px solid #adabab;
+	border-left: 1px solid #adabab;
+	cursor: pointer;
+	@include transition-property(box-shadow);
+	@include transition-duration(0.3s);
+	@include transition-timing-function(linear);
+}
+
+.sub_menu_click_after {
+	@include box-shadow(0px 0px 5px 2px #adabab inset);
+}
+
+.star_menu, .bold_menu, .backgroundcolor_menu {
+	@include sub_menu;
+}
+
+.star_menu {
+	background-image: url(/images/star.png);
+	background-repeat: no-repeat;
+	background-size: 15px;
+	background-position: 2.5px 3px;
+}
+
+.star_before:before {
+	content: '';
+	width: 15px;
+	height: 15px;
+	position: absolute;
+	left: 1px;
+	background-image: url(/images/star.png);
+	background-size: 15px;
+}
+.bold_menu {
+	background-image: url(/images/bold.png);
+	background-repeat: no-repeat;
+	background-size: 15px;
+	background-position: 3px 3.5px;
+}
+
+.clear {
 	clear: both;
 }

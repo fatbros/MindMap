@@ -150,18 +150,42 @@ io.sockets.on('connection', function(socket){
     //===============================================
     //load start
     //===============================================
-    socket.on('broadcast_load', function(){
+    socket.on('broadcast_load', function(data){
+        //画像を生成したのでサーバーのdraw_coord_allを削除する。
+        draw_coord_all[data.number].splice(0, draw_coord_all[data.number].length);
+        console.log('==================');
+        console.log('==================');
+        console.log('==================');
+        console.log('==================');
+        console.log('==================');
+        console.log('==================');
+        console.log(draw_coord_all);
+
         socket.get('name', function(err, name){
             var yes_name = name;
             var message = 'さんがセントラルイメージのトリミングをしています';
-            socket.broadcast.emit('loading', {name: name, message: message});
+            socket.broadcast.emit('loading', {name: name, message: message, number: data.number});
+            //test
         });
     });
     //===============================================
     //load end
     //===============================================
     socket.on('broadcast_load_end', function(data){
-        socket.broadcast.emit('end_loading', {tl: data.tl, br: data.br});
+        socket.broadcast.emit('end_loading', {
+            square: data.square,
+            dom_img_pos: data.dom_img_pos,
+            overflow_div_pos: data.overflow_div_pos,
+            access_num: data.access_num,
+            canvas_num: data.canvas_num
+        });
+    });
+
+    socket.on('move_img', function(data){
+        socket.broadcast.emit('move_img', {
+            img_pos: data.img_pos,
+            id: data.id
+        });
     });
 
     //===============================================
@@ -199,6 +223,25 @@ io.sockets.on('connection', function(socket){
         });
     });
 
+    //ブランチの内容の編集
+    socket.on('broadcast_subElement_brunchEdit', function(data){
+        socket.broadcast.emit('subElement_brunchEdit', {
+            id: data.id,
+            val: data.val
+        });
+    });
+
+    //delete
+    socket.on('broadcast_delete_element', function(data){
+        socket.broadcast.emit('delete_element', {id: data.id});
+    });
+
+    socket.on('broadcast_menu_change', function(data){
+        socket.broadcast.emit('sub_menu_change', {
+            menu: data.menu,
+            id: data.id
+        });
+    });
     //===============================================
     //disconnect
     //===============================================

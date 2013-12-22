@@ -44,15 +44,17 @@ function Element(setting, socket){
 	this.socket = socket;
 }
 
-Element.prototype.create = function(){
-	var main = $('#main');
+Element.prototype.create = function(emit_flag){
+	var main = $('#brunch_area');
 	//=============================================
 	//divの生成
 	//=============================================
 	main.prepend('<div class=rad_map id=' + this.sub_id + '><span></span></div>');
 	//セレクター
-	this.id_select = $('#main').find('#' + this.sub_id);
+	this.id_select = main.find('#' + this.sub_id);
 	this.id_select_span = this.id_select.find('span');
+	//id centralを追加する
+	this.id_select.addClass('central');
 	//生成したdivに文字を流し込む
 	for (var i = 0; i < this.val.length; i++) {
 		if (0 < i) {
@@ -69,18 +71,32 @@ Element.prototype.create = function(){
 		'padding-top': 8,
 		'padding-bottom': 8,
 		'top': this.whtl.t,
-		'left': this.whtl.l
+		'left': this.whtl.l,
+		'color': '#3e3a39'
     });
     this.whtl.w = this.id_select.outerWidth();
     this.whtl.h = this.id_select.outerHeight();
 
+    this.img_center();
+    this.svg_position_down();
+    //=============================================
+	//socket
+	//=============================================
+	//emit flagがtrueの時はユーザーがdblclickしたときotherUserにbroadcastする
+	if(emit_flag === true){
+		this.socket.emit('broadcast_subElement_brunchEdit', {
+			id: this.sub_id,
+			val: this.val
+		});
+	}
     //=============================================
 	//メニュの生成
 	//=============================================
-	this.id_select_span.after("<img src=/images/plus.png class='plus_l plus' rel=L>");
-	this.id_select_span.after("<img src=/images/plus.png class='plus_r plus' rel=R>");
+	this.id_select_span.after("<img src=/images/tri_left.png class='central_img_l plus' rel=L>");
+	this.id_select_span.after("<img src=/images/tri_right.png class='central_img_r plus' rel=R>");
 	var circle_h = 15;
-	var h = (this.id_select.outerHeight() - circle_h) / 2;
+	var central_bor = parseInt(this.id_select.css('border-width'));
+	var h = (this.id_select.outerHeight() - circle_h - central_bor * 2) / 2;
 	var img_plus = this.id_select.find('.plus');
 	img_plus.css({
 		'top': h
@@ -91,17 +107,25 @@ Element.prototype.create = function(){
 	this.add_event();
 };
 
-Element.prototype.edit = function(){
+Element.prototype.edit = function(emit_flag){
 	//セレクター
-	var main = $('#main');
+	var main = $('#brunch_area');
 	var that = this;
 	//targetを一旦削除する
 	this.id_select.remove();
 	//textareaの生成
-	main.prepend('<textarea id=editarea>' + this.whtl.value + '</textarea>');
-	var editarea = main.find('#editarea');
+	var editarea = $('<textarea>', {id: 'editarea'});
+
+	this.whtl.value = (this.whtl.value instanceof Array) ? this.whtl.value : [this.whtl.value];
+	main.prepend(editarea);
+	for (var i = 0; i < this.whtl.value.length; i++) {
+		if (0 < i) {
+			editarea.append('\n');
+		}
+		editarea.append(this.whtl.value[i]);
+	}
 	//editareaにフォーカスを当てる
-	editarea.focus();
+	this.text_focus(editarea);
 	editarea.css({
 		'position': 'absolute',
 		'width': that.whtl.w,
@@ -123,7 +147,7 @@ Element.prototype.edit = function(){
 				//=============================================
 				//splitした配列を送り、divを生成する
 				//=============================================
-				that.create();
+				that.create(emit_flag);
 				editarea.remove();
 			}
 	});
@@ -156,7 +180,6 @@ Element.prototype.move_element = function(that){
 
 Element.prototype.img_center = function(){
 	var h_devi_2 = this.whtl.h / 2;
-	console.log(this.whtl);
 	this.svg.svg_position.l_img.x = this.whtl.l;
 	this.svg.svg_position.l_img.y = this.whtl.t + h_devi_2;
 	this.svg.svg_position.r_img.x = this.whtl.l + this.whtl.w;
@@ -183,37 +206,99 @@ Element.prototype.add_event = function(){
 	this.drag_event();
 	this.img_center();
 	//エレメントのイベント
-	this.id_select.on({
+	this.id_select_span.on({
 		'dblclick': function(){
 			that.whtl.value = that.id_select_span.html();
-			that.edit();
-		},
-		'mouseenter': function(){
-			$(this).find('img').stop(true,false).animate({
-				opacity: 1
-			},200);
-		},
-		'mouseleave': function(){
-			$(this).find('img').stop(true,false).animate({
-				opacity: 0
-			},200);
+			that.whtl.value = that.whtl.value.split('<br>');
+			that.edit(true);
 		}
+		// 'mouseenter': function(){
+		// 	$(this).find('img').stop(true,false).animate({
+		// 		opacity: 1
+		// 	},200);
+		// },
+		// 'mouseleave': function(){
+		// 	$(this).find('img').stop(true,false).animate({
+		// 		opacity: 0
+		// 	},200);
+		// }
 	});
-	//img plus
-	img_plus.on({
-		'click': function(){
-			var RL = $(this).attr('rel');
-			that.element_new_create(RL, undefined, true);
-		}
-	});
+	// //img plus
+	// img_plus.on({
+	// 	'click': function(){
+	// 		var RL = $(this).attr('rel');
+	// 		that.element_new_create(RL, undefined, true);
+	// 	}
+	// });
 };
 
 //main brunchを作る場合rlがある
-Element.prototype.element_new_create = function(rl, val, emit){
+Element.prototype.element_new_create = function(rl, val, emit, color){
 	var RL = rl;
 	var sub_id = this.sub_id + '_sub' + this.sub_num;
-	var sub_create = new SubElement(this.whtl, sub_id, RL, this);
+	var sub_create = new SubElement(this.whtl, sub_id, RL, this, color);
 	this.sub_num++;
 	this.subElement_all.push(sub_create);
-	sub_create.edit('main', val, emit);
+	sub_create.edit('main', val, false);
 };
+
+Element.prototype.text_focus = function(that){
+	var std_scrollPos = {
+		t: $('#main').scrollTop(),
+		l: $('#main').scrollLeft()
+	};
+	that.focus();
+	$('#main').scrollTop(std_scrollPos.t);
+	$('#main').scrollLeft(std_scrollPos.l);
+};
+
+Element.prototype.otherUser_edit = function(val){
+	var that = this;
+	this.val = val;
+
+	this.id_select_span.empty();
+	for (var i = 0; i < this.val.length; i++) {
+		if (0 < i) {
+			this.id_select_span.append('<br />');
+		}
+		this.id_select_span.append(this.val[i]);
+	}
+
+	//作ったdivのcssの設定
+    this.id_select.css({
+		'position': 'absolute',
+		'width': that.id_select_span.width() + 30,
+		'height': that.id_select_span.height(),
+		'padding-top': 8,
+		'padding-bottom': 8,
+		'color': '#3e3a39'
+    });
+    this.whtl.w = this.id_select.outerWidth();
+    this.whtl.h = this.id_select.outerHeight();
+    //=============================================
+	//svgの座標取得　svgインスタンスの生成
+	//=============================================
+    this.img_center();
+	this.svg_position_down();
+};
+
+//scrollを中心に持っていく
+function center_scroll(){
+    var main = $('#main');
+    var scrollWrap = $('#scrollWrap');
+
+    scrollWrap_pos = {
+        w: parseInt(scrollWrap.css('width')),
+        h: parseInt(scrollWrap.css('height'))
+    };
+    main_pos = {
+        w: parseInt(main.css('width')) - 320,
+        h: parseInt(main.css('height'))
+    };
+    scroll_cal = {
+        w: scrollWrap_pos.w - main_pos.w,
+        h: scrollWrap_pos.h - main_pos.h
+    };
+    main.scrollLeft(scroll_cal.w / 2);
+    main.scrollTop(scroll_cal.h / 2);
+}

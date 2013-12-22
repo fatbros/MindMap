@@ -1,5 +1,5 @@
 {
-  "name": "application-name",
+  "name": "MindMap",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "express": "3.2.6",
-    "jade": "*"
+    "ejs": "0.8.4",
+    "socket.io": "0.9.16"
   }
 }

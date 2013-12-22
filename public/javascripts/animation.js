@@ -1,102 +1,49 @@
 $(function(){
 
-	//init===============================
-	logo_padding();
-	//===================================
-
-    //nav================================
-    //animation
-    var nav_li = $('nav ul li');
-    var color = {
-        'brunch': '#e87ea5',
-        'image': '#8ac233',
-        'canvas': '#41babc'
-    };
-    function start_navColor_animation(){
-        var id_color = color[$(this).attr('id')];
-        $(this).stop(true, false).animate({
-            backgroundColor: id_color
-        }, 'fast');
-    }
-    function end_navColor_animation(){
-        $(this).stop(true, false).animate({
-            backgroundColor: '#414141'
-        }, 'fast', function(){
-            $(this).css('background-color', '');
-        });
-    }
-    //navクリックしたメニューに関係ないメニューのcolorをもとに戻す
-    function off_navColor_animation(that){
-        //canvasがmainに表示されている時、canvasを画面外にアニメーションさせる
-        if(parseInt($('#main #canvas_area').css('left')) >= 0){
-            $('#canvas_area').stop(true, false).animate({
-                'left': '-500px',
-                'opacity': 0,
-            }, 500);
-        }
-        //#imgのz-indexが1の場合　
-        if($('#img').css('z-index') === '1'){
-            $('#img').css('z-index', '-1');
-        }
-        
-        nav_li.each(end_navColor_animation);
-        nav_li.off('mouseleave');
-        nav_li.on('mouseleave', end_navColor_animation);
-
-        $(that).off('mouseleave');
-    }
-    function nav_click(){
-        off_navColor_animation(this);
-        var id_color = color[$(this).attr('id')];
-        $(this).stop(true, false).animate({
-            backgroundColor: id_color
-        }, 'fast');
-    }
-    nav_li.on('mouseenter', start_navColor_animation);
-    nav_li.on('mouseleave', end_navColor_animation);
-    nav_li.on('click', nav_click);
-
     //canvas=============================
     //draggable--------------------------
     //nav canvasをクリックした時画面上にcanvasを表示させる
-    canvas_nav = $('ul #canvas');
-    canvas_nav.on('click', function(){
-        $('#canvas_area').stop(true, false).animate({
-            'left': '0px',
-            'opacity': 1,
-        }, 500);
-    });
-    $('#main #canvas_area').draggable({
+    var canvas_nav = $('ul #canvas');
+
+    $('#canvas_area').draggable({
         'handle': '#canvas_topBar',
-        'containment': 'parent',
+        'containment': '#over_scrollWrap',
         drag: function(){
         },
         stop: function(){
         }
     });
     $('#close_btn').on('click', function(){
-        off_navColor_animation(canvas_nav);
-        canvas_nav.on('mouseleave', end_navColor_animation);
+        nav_animation.off_navColor_animation(canvas_nav);
+        //canvas_nav.on('mouseleave', nav_animation.end_navColor_animation.bind(canvas_nav));
     });
     
-    //img===============================
-    image_nav = $('ul #image');
-    image_nav.on('click', function(){
-        $('#img').css('z-index', 1);
-    });
-
-    //==================================
-    
-    //ロゴの位置
+    //===============================
+    //リサイズした時
+    //===============================
     function logo_padding(){
         var logo_padding = (parseInt($('header').height()) - parseInt($('#logo img').height())) / 2;
         $('#logo img').css({
             'padding-top': logo_padding
         });
     }
+    function over_scrollWrap_pos(){
+        var window_size = $(window).width();
+        var main_size = window_size - 320;
+        console.log(main_size);
+
+        $('#over_scrollWrap').css({
+            'width': main_size,
+            'height': '100%'
+        });
+    }
     $(window).on({
         'resize': function(){
 			logo_padding();
+            over_scrollWrap_pos();
         }
     });
+    logo_padding();
+    center_scroll();
+    over_scrollWrap_pos();
 });

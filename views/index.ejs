@@ -10,12 +10,10 @@
 	<script type="text/javascript" src="/javascripts/jquery-ui-1.9.2.custom.min.js"></script>
 	<script type="text/javascript" src="/javascripts/easeljs-0.6.1.min.js"></script>
 	<script type="text/javascript" src="/javascripts/tweenjs-0.4.1.min.js"></script>
-	<!--
 	<script type="text/javascript" src="/javascripts/raphael-min.js"></script>
 	<script type="text/javascript" src="/javascripts/svg.js"></script>
+    <script type="text/javascript" src="/javascripts/element.js"></script>
 	<script type="text/javascript" src="/javascripts/sub.js"></script>
-	<script type="text/javascript" src="/javascripts/element.js"></script>
-    -->
 
 	<script type="text/javascript" src="/javascripts/img.js"></script>
 	<script type="text/javascript" src="/javascripts/index.js"></script>
@@ -65,6 +63,16 @@
         <!-- /#side -->
 
         <div id="main">
+            <div id="scrollWrap">
+                <div id="svg"></div>
+                <div id="img"></div>
+                <div id="brunch_area"></div>
+            </div>
+            <!-- /#scrollWrap -->
+        </div>
+        <!-- /#main -->
+
+        <div id="over_scrollWrap">
 
             <div id="loginWrap">
                 <div id="loginForm">
@@ -77,9 +85,9 @@
                         <div class="clear"></div>
                     </div>
                     <!-- /#form_top -->
-                    <div id="form_bottom">
-                        <div id="loginButton_box">
-                            <div id="loginButton">
+                    <div class="form_bottom">
+                        <div class="loginButton_box">
+                            <div class="loginButton">
                                 Login
                             </div>
                         </div>
@@ -87,29 +95,32 @@
                     <!-- /#form_bottom -->
                 </div>
                 <!-- /#loginForm -->
-
-                <div id="loginForm_start">
-                    
-                </div>
-                <!-- /#loginForm_start -->
             </div>
             <!-- /#login_wrap -->
-            
-            <div id="img"></div>
+
             <div id="confirmation">
-                <!-- img_confirmation end -->
-                <div id="loading">
-                    <img src="/images/loading.gif" alt="">
-                    <div id="message"></div>
-                </div>
-                <!-- loading end -->
                 <div id="main_brunch">
-                    <textarea name="main" class="mind_title" num="0" placeholder="MindMap Title"></textarea>
+                    <!-- <textarea name="main" class="mind_title" num="0" placeholder="MindMap Title"></textarea>
                     <textarea name="main" class="main_brunch" num="1" placeholder="Main Brunch name"></textarea>
                     <textarea name="main" class="main_brunch" num="2" placeholder="Main Brunch name"></textarea>
                     <textarea name="main" class="main_brunch" num="3" placeholder="Main Brunch name"></textarea>
-                    <textarea name="main" class="main_brunch" num="4" placeholder="Main Brunch name"></textarea>
-                    <div class="enter">enter</div>
+                    <textarea name="main" class="main_brunch" num="4" placeholder="Main Brunch name"></textarea> -->
+                    <img src="/images/mindmap_title.png" alt="mindmap_title">
+                    <input type="text" class="mind_title" placeholder="MindMap Title" num="0">
+                    <img src="/images/main_brunch.png" alt="mindmap_title">
+                    <input type="text" class="main_brunch" placeholder="Main Brunch name" num="1">
+                    <input type="text" class="main_brunch" placeholder="Main Brunch name" num="2">
+                    <input type="text" class="main_brunch" placeholder="Main Brunch name" num="3">
+                    <input type="text" class="main_brunch" placeholder="Main Brunch name" num="4">
+
+                    <div class="form_bottom" style="width: 80%; margin: 2em auto 0 auto">
+                        <div class="loginButton_box">
+                            <div class="loginButton">
+                                Start
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /#form_bottom -->
                 </div>
             </div>
             <!-- /#confirmation end -->
@@ -117,28 +128,41 @@
             <div id="canvas_area">
                 <div id="canvas_topBar">
                     <img src="/images/close.png" alt="close" id="close_btn">
-					<div id="canvas_number">
-                    	<img src="/images/canvas_num.png" alt="canvas_number">
-                    	<div>
-	                    	<span rel="0">1</span>
-	                    	<span rel="1">2</span>
-	                    	<span rel="2">3</span>
-	                    	<span rel="3">4</span>
-	                    </div>
+                    <div id="canvas_number">
+                        <img src="/images/canvas_num.png" alt="canvas_number">
+                        <div>
+                            <span rel="0">1</span>
+                            <span rel="1">2</span>
+                            <span rel="2">3</span>
+                            <span rel="3">4</span>
+                        </div>
                     </div>
                     <!-- /#canvas_number -->
+                    <img src="/images/download.png" alt="create" id="create_button_second">
                     <img src="/images/download.png" alt="create" id="create_button">
                 </div>
                 <!-- /#canvas_topBar -->
+                
                 <div id="canvas_wrap">
-	                <canvas width="500px" height="400px" id="draw_canvas0">
-	                </canvas>
-	                <canvas width="500px" height="400px" id="draw_canvas1">
-	                </canvas>
-	                <canvas width="500px" height="400px" id="draw_canvas2">
-	                </canvas>
-	                <canvas width="500px" height="400px" id="draw_canvas3">
-	                </canvas>
+                    <div id="draw_canvas0">
+                        <canvas width="500px" height="400px" id="main_canvas0">
+                        </canvas>
+                    </div>
+
+                    <div id="draw_canvas1">
+                        <canvas width="500px" height="400px" id="main_canvas1">
+                        </canvas>
+                    </div>
+                    
+                    <div id="draw_canvas2">
+                        <canvas width="500px" height="400px" id="main_canvas2">
+                        </canvas>
+                    </div>
+
+                    <div id="draw_canvas3">
+                        <canvas width="500px" height="400px" id="main_canvas3">
+                        </canvas>
+                    </div>
 
                     <div id="img_confirmation">
                         <div id="select_animation_t"></div>
@@ -155,19 +179,19 @@
                 </div>
                 <!-- /#canvas_wrap -->
                 <div id="canvas_bottomBar">
-                	<div id="select_color_info">
-                		<div id="select_color">
-                			<img src="/images/select_color.png" alt="select_color">
-                			<div id="now_color_box"></div>
-                		</div>
-                		<!-- /#select_color -->
-                		<div id="edit_user">
-                			<img src="/images/edit_user.png" alt="edit_user">
-                		</div>
-                		<!-- /#edit_user -->
-                		<div class="clear"></div>
-                	</div>
-                	<!-- /#select_color_info -->
+                    <div id="select_color_info">
+                        <div id="select_color">
+                            <img src="/images/select_color.png" alt="select_color">
+                            <div id="now_color_box"></div>
+                        </div>
+                        <!-- /#select_color -->
+                        <div id="edit_user">
+                            <img src="/images/edit_user.png" alt="edit_user">
+                        </div>
+                        <!-- /#edit_user -->
+                        <div class="clear"></div>
+                    </div>
+                    <!-- /#select_color_info -->
                     <div id="select_colorBox">
                         <div id="colorBox_top">
                             <div class="white">
@@ -216,7 +240,7 @@
             <!-- /#canvas_area -->
 
         </div>
-        <!-- /#main -->
+        <!-- /#over_scrollWrap -->
 
         <div id="other_user_login">
             <h4 class="navHeader">
@@ -226,52 +250,11 @@
         <!-- /#other_user_login -->
     </div>
     <!-- /#mainWrap -->
+    <script type="text/javascript" src="/javascripts/global.js"></script>
 	<script type="text/javascript">
-		//var svg_selector = Raphael('svg','100%','100%');
+		var svg_selector = Raphael('svg','100%','100%');
 		var element = [];
 		var access = {};
 	</script>
 </body>
 </html>
-
-<!--
-	<section id="main">
-		<section id="canvas_area">
-			<canvas id="canvas" width="600px" height="600px"></canvas>
-			<div class="yes">YES</div>
-			<div class="no" style="margin-left: 20px">NO</div>
-		</section>
-		<div id="svg"></div>
-		<div id="img"></div>
-		<div id="confirmation">
-			<div id="img_confirmation">
-				<div id="select_animation_t"></div>
-				<div id="select_animation_b"></div>
-				<div id="select_animation_l"></div>
-				<div id="select_animation_r"></div>
-				<div id="square_tl" class="square" rel="t/l/b/r"></div>
-				<div id="square_bl" class="square" rel="b/l/t/r"></div>
-				<div id="square_br" class="square" rel="b/r/t/l"></div>
-				<div id="square_tr" class="square" rel="t/r/b/l"></div>
-			</div>
--->
-			<!-- img_confirmation end -->
-<!-- 
-			<div id="loading">
-				<img src="/images/loading.gif" alt="">
-				<div id="message"></div>
-			</div>
--->
-			<!-- loading end -->
-<!--
-			<div id="main_brunch">
-				<textarea name="main" class="mind_title" num="0" placeholder="MindMap Title"></textarea>
-				<textarea name="main" class="main_brunch" num="1" placeholder="Main Brunch name"></textarea>
-				<textarea name="main" class="main_brunch" num="2" placeholder="Main Brunch name"></textarea>
-				<textarea name="main" class="main_brunch" num="3" placeholder="Main Brunch name"></textarea>
-				<textarea name="main" class="main_brunch" num="4" placeholder="Main Brunch name"></textarea>
-				<div class="enter">enter</div>
-		</div>
-	</section>
--->
-	<!-- main end -->
