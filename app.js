@@ -44,6 +44,7 @@ var socketIO = require("socket.io");
 var io = socketIO.listen(server);
 
 io.set('transports', [
+    'websocket',
     'xhr-polling'
 ]);
 
@@ -153,14 +154,6 @@ io.sockets.on('connection', function(socket){
     socket.on('broadcast_load', function(data){
         //画像を生成したのでサーバーのdraw_coord_allを削除する。
         draw_coord_all[data.number].splice(0, draw_coord_all[data.number].length);
-        console.log('==================');
-        console.log('==================');
-        console.log('==================');
-        console.log('==================');
-        console.log('==================');
-        console.log('==================');
-        console.log(draw_coord_all);
-
         socket.get('name', function(err, name){
             var yes_name = name;
             var message = 'さんがセントラルイメージのトリミングをしています';
