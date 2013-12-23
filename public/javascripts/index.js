@@ -2,7 +2,7 @@ $(function(){
     //===============================================
     //socket
     //===============================================
-    var socket = io.connect('http://localhost:3000', {"sync disconnect on unload" : true});
+    var socket = io.connect('http://gentle-bayou-5667.herokuapp.com', {"sync disconnect on unload" : true});
     window.addEventListener('load', init);
     
     //===============================================
