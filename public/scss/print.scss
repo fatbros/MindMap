@@ -34,6 +34,10 @@ $black: #3e3a39;
  	font-family: "Raleway","HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue",Helvetica,Arial,"Lucida Grande",sans-serif
  }
 
+ @mixin Helvetica {
+
+ }
+
  @mixin Raleway_200 {
  	@include Raleway;
  	font-weight: 200;
@@ -346,10 +350,11 @@ nav {
 				text-align: center;
 				letter-spacing: 0.2em;
 				color: #fff;
-				@include Raleway;
 			}
 			span {
 				cursor: pointer;
+				@include nav_sentence;
+				font-weight: lighter;
 			}
 		}
 		#close_btn {

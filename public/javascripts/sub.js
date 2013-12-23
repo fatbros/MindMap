@@ -64,6 +64,7 @@ function SubElement(whtl, sub_id, RL, up_hierarchy_this, color){
 	};
 }
 
+//test
 SubElement.prototype.create = function(emit, mode){
 	var main = $('#brunch_area');
 	var that = this;
@@ -116,7 +117,9 @@ SubElement.prototype.create = function(emit, mode){
 		this.socket.emit('broadcast_subElement_create',{
 			id: that.up_sub_id,
 			val: that.val,
-			rl: that.R_or_L
+			rl: that.R_or_L,
+			t: that.whtl.t,
+			l: that.whtl.l
 		});
 	}else if(mode === 'edit'){
 		this.socket.emit('broadcast_subElement_brunchEdit', {
@@ -334,6 +337,7 @@ SubElement.prototype.otherUser_menu_change = function(menu_name){
 	this.sub_menu_animation_func.click_animation.apply(selector);
 }
 
+//test
 SubElement.prototype.edit = function(mode, val, emit){
 	//セレクター
 	var main = $('#brunch_area');
@@ -514,6 +518,22 @@ SubElement.prototype.element_new_create = function(rl, val, emit){
 	this.downHierarchy_numID++;
 	this.subElement_all.push(sub_create);
 	sub_create.edit('main', val, emit);
+};
+
+//test
+SubElement.prototype.otherUser_element_new_create = function(rl, val, t, l){
+	var RL = rl;
+	var sub_id = this.sub_id + '_sub' + this.downHierarchy_numID;
+	var sub_create = new SubElement(this.whtl, sub_id, RL, this, this.color);
+	
+	sub_create.val = val;
+	sub_create.whtl.t = t;
+	sub_create.whtl.l = l;
+	console.log(sub_create);
+
+	this.downHierarchy_numID++;
+	this.subElement_all.push(sub_create);
+	sub_create.create(false, 'main');
 };
 
 SubElement.prototype.search_delete_element = function(){

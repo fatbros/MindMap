@@ -212,7 +212,9 @@ io.sockets.on('connection', function(socket){
         socket.broadcast.emit('subElement_create', {
             id: data.id,
             val: data.val,
-            rl: data.rl
+            rl: data.rl,
+            t: data.t,
+            l: data.l
         });
     });
 

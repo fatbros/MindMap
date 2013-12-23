@@ -30,7 +30,6 @@ $(function(){
     function over_scrollWrap_pos(){
         var window_size = $(window).width();
         var main_size = window_size - 320;
-        console.log(main_size);
 
         $('#over_scrollWrap').css({
             'width': main_size,
