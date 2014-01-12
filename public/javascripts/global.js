@@ -13,9 +13,16 @@ var nav_animation = (function(){
             $('#brunch_area').css('z-index', '1');
         },
         canvas: function(){
+            var canvas_area = $('#canvas_area');
+            var canvas_areaW = canvas_area.width();
+            var canvas_areaH = canvas_area.height();
+            var wrapW = canvas_area.parent().width();
+            var wrapH = canvas_area.parent().height();
+
             $('#over_scrollWrap').css('z-index', '5');
-            $('#canvas_area').stop(true, false).animate({
-                'left': '0px',
+            canvas_area.stop(true, false).animate({
+                'left': (wrapW - canvas_areaW) / 2,
+                'top': (wrapH - canvas_areaH) / 2,
                 'opacity': '1',
                 'z-index': '5'
             }, 500);

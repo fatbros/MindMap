@@ -809,5 +809,51 @@ nav {
   background-size: 15px;
   background-position: 3px 3.5px; }
 
+.hint {
+  min-width: 200px;
+  position: absolute;
+  font-family: Helvetica, Arial, 'Hiragino Kaku Gothic ProN', 'ヒラギノ角ゴ ProN W3', Meiryo, メイリオ, sans-serif;
+  font-size: 0.8em;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -o-border-radius: 5px;
+  border-radius: 5px;
+  border: 7px solid #2f9998;
+  z-index: 100;
+  display: none; }
+
+.hintTitle {
+  background-color: #fff;
+  padding: 10px;
+  font-size: 2em;
+  color: #f4dd25; }
+  .hintTitle img {
+    display: inline;
+    height: 1em;
+    padding-right: 7px;
+    vertical-align: bottom; }
+
+.hintSentence {
+  background-color: #2f9998;
+  padding: 10px;
+  font-size: 1em;
+  color: #fff;
+  line-height: 130%;
+  letter-spacing: 0.1em; }
+  .hintSentence h3 {
+    font-size: 1.3em;
+    color: #f4dd25;
+    margin-bottom: 5px; }
+  .hintSentence .yellow {
+    color: #f4dd25; }
+  .hintSentence .menu_icon {
+    height: 1em;
+    margin-right: 10px; }
+
+.tri {
+  position: absolute;
+  border: 10px solid transparent; }
+
 .clear {
   clear: both; }

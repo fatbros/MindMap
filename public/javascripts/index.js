@@ -2,9 +2,117 @@ $(function(){
     //===============================================
     //socket
     //===============================================
+    //var socket = io.connect('http://localhost', {"sync disconnect on unload" : true});
     var socket = io.connect('http://gentle-bayou-5667.herokuapp.com', {"sync disconnect on unload" : true});
-    window.addEventListener('load', init);
-    
+    //window.addEventListener('load', init);
+    //hint navigation用のオブジェクト
+    var json = {};
+    $.ajax({
+        type: 'GET',
+        url: './json/nav.json',
+        datatype: 'json',
+        success: function(data){
+            for(var i = 0; i < data.length; i++){
+                json[i] = data[i];
+            }
+            init();
+        }
+    });
+    //引数　hintを設置するdivのセレクタ　jsonの配列番号
+    //最後にhintWrapをreturnする
+    //hintWrapの位置はreturnしたオブジェクトを使い計算する
+    function hintNav(hintSelector, jsonNum, triDirection, hintWidth){
+        var hintWrap = $('<div>',{
+            'class': 'hint'
+        });
+        hintWrap.css('width', hintWidth);
+
+        var hintTitle = $('<div>', {
+            'class': 'hintTitle'
+        }).append(json[jsonNum].title).appendTo(hintWrap);
+
+        var hintIcon = $('<img>',{
+            'src': './images/hint.png'
+        }).prependTo(hintTitle);
+
+        var hintSentence = $('<div>', {
+            'class': 'hintSentence'
+        }).append(json[jsonNum].sentence).appendTo(hintWrap);
+        hintSelector.append(hintWrap);
+
+        //三角形の位置
+        switch(triDirection){
+            case 'left':
+                var h = hintWrap.height() / 2 - 10;
+                var tri = $('<div>', {
+                    'class': 'tri'
+                    }).css({
+                        'top': h,
+                        'left': '-27px',
+                        'border-right': '10px solid #2f9998'
+                    }).appendTo(hintWrap);
+                break;
+            case 'bottom':
+                var w = hintWrap.width() / 2 - 10;
+                var h = hintWrap.height() + 7;
+                var tri = $('<div>', {
+                    'class': 'tri'
+                }).css({
+                    'left': w,
+                    'top': h,
+                    'border-top': '10px solid #2f9998'
+                }).appendTo(hintWrap);
+                break;
+            case 'top':
+                var w = hintWrap.width() / 2 - 10;
+                var h = -27;
+                var tri = $('<div>', {
+                    'class': 'tri'
+                }).css({
+                    'left': w,
+                    'top': h,
+                    'border-bottom': '10px solid #2f9998'
+                }).appendTo(hintWrap);
+                break;
+            default:
+                break;
+        }
+        return hintWrap;
+    }
+    function hintNavPos(hintSelector, top, left, bottom, right){
+        var d = $.Deferred();
+        hintSelector.css({
+            'top': top,
+            'left': left,
+            'bottom': bottom,
+            'right': right
+        });
+        d.resolve();
+        return d.promise();
+    }
+    function flashHint(hintSelector){
+        var d = $.Deferred();
+        hintSelector.fadeIn('fast').fadeOut('fast').fadeIn('fast', function(){
+            d.resolve();
+        });
+        return d.promise();
+    }
+    function delay(time){
+        var d = $.Deferred();
+        setTimeout(function(){
+            d.resolve();
+        }, time);
+        return d.promise();
+    }
+    function deleteHint(hintSelector){
+        var d = $.Deferred();
+        hintSelector.fadeOut('slow', function(){
+            $(this).remove();
+            d.resolve();
+        })
+        return d.promise();
+    }
+
     //===============================================
     //init
     //===============================================
@@ -165,8 +273,17 @@ $(function(){
                     $('#side .userName').append(user_name);
                     $('#loginForm').fadeOut('normal', function(){
                         $(this).remove();
-                        $('#side, #other_user_login').fadeIn();
-
+                        $('#side, #other_user_login').fadeIn('normal').promise().then(function(){
+                            //hint navの生成
+                            var hint = hintNav($('#hintNavigation'), 0, 'left', '40%');
+                            //navigationの位置の処理
+                            var canvasPos = parseInt($('#canvas').offset().top - $('header').height() );
+                            var diff = (hint.outerHeight() - $('#canvas').outerHeight()) / 2;
+                            hintNavPos(hint, canvasPos - diff, 20, '', '')
+                                .then(function(){return flashHint(hint)})
+                                .then(function(){return delay(6500)})
+                                .then(function(){return deleteHint(hint)});
+                        });
                         //over_scrollWrapのz-indexを変更させる
                         $('#over_scrollWrap').css('z-index', '-5');
                     });
@@ -175,6 +292,47 @@ $(function(){
                 }
             }
         });//.login yes end
+        
+        //最初の一回のみ、canvasメニューをクリックした時、ナビゲーションを生成する。
+        (function(){
+            $('#canvas').on({
+                'click': canvasNav
+            });
+            function canvasNav(){
+                //一回のみなのでcanvasNavイベントをoff
+                $('#canvas').off('click', canvasNav);
+                //canvasnumber hint
+                var hint = hintNav($('#hintNavigation'), 1, 'bottom', '40%');
+                //canvasbutton hint
+                var hint2 = hintNav($('#hintNavigation'), 2, 'bottom', '40%');
+                var left = ($('#hintNavigation').width() - hint.outerWidth()) / 2;
+                hintNavPos(hint, 20, left, '', '')
+                    .then(function(){return flashHint(hint)})
+                    .then(function(){return delay(5000)})
+                    .then(function(){return deleteHint(hint)})
+                    //hint1終了
+                    .then(function(){return hintNavPos(hint2, 20, left, '', '')})
+                    .then(function(){return flashHint(hint2)})
+                    .then(function(){return delay(4000)})
+                    .then(function(){return deleteHint(hint2)});
+                    //hint2終了
+            }
+        })();
+        //最初の一回のみ、create_buttonをクリックした時、ナビゲーションを生成する。
+        (function(){
+            $('#create_button').on({
+                'click': trimNav
+            });
+            function trimNav(){
+                $('#create_button').off('click', trimNav);
+                var hint = hintNav($('#hintNavigation'), 3, 'bottom', '30%');
+                var left = ($('#hintNavigation').width() - hint.outerWidth()) / 2;
+                hintNavPos(hint, 30, left, '', '')
+                    .then(function(){return flashHint(hint)})
+                    .then(function(){return delay(4000)})
+                    .then(function(){return deleteHint(hint)});
+            }
+        })();
         
         // ===============================================
         //scoket on
@@ -280,6 +438,13 @@ $(function(){
         socket.on('main_brunch_create', function(){
             //次にimgを生成するときはcreate_button_secondから
             $('#create_button').remove();
+            //mainブランチの説明 navigation
+            var hint = hintNav($('#hintNavigation'), 4, 'top', '60%');
+            var left = ($('#hintNavigation').width() - hint.outerWidth()) / 2;
+            hintNavPos(hint, '', left, 20, '')
+                .then(function(){return flashHint(hint)})
+                .then(function(){return delay(10000)})
+                .then(function(){return deleteHint(hint)});
 
             var canvas_nav = $('ul #canvas');
             var confirmation_selector = $('#confirmation');
@@ -374,6 +539,7 @@ $(function(){
                 var push = main_brunch_enter(brunch);
                 if(push === true){
                     //broadcastでmain brunchの終了を送る
+                    //test
                     socket.emit('broadcast_main_brunch_end');
                     $('#confirmation').fadeOut().find('#main_brunch').fadeOut();
                     create_first_brunch(brunch);
@@ -399,7 +565,48 @@ $(function(){
         }
     }
 
+    //===============================================
+    //mainブランチを作ったあとヒントfunction
+    //===============================================
+    var reflexive_hint = (function(){
+        var hint_num = 6;
+
+        function hint(){
+            var inHint = hintNav($('#hintNavigation'), hint_num, 'default', '30%');
+            hintNavPos(inHint, '', '', 20, 20)
+                .then(function(){return flashHint(inHint)})
+                .then(function(){return delay(10000)})
+                .then(function(){return deleteHint(inHint)})
+                .then(function(){return delay(7000)})
+                .then(function(){
+                    hint_num++;
+                    if(hint_num !== Object.keys(json).length){
+                        reflexive_hint.create_hint();
+                    }
+                });
+        }
+        return {
+            create_hint: function(){
+                hint();
+            }
+        }
+    })();
+
+    function hintNav_after_first_brunch(){
+        var hint = hintNav($('#hintNavigation'), 5, 'top', '40%');
+        var left = ($('#hintNavigation').width() - hint.outerWidth()) / 2;
+        hintNavPos(hint, '', left, 20, '')
+            .then(function(){return flashHint(hint)})
+            .then(function(){return delay(5000)})
+            .then(function(){return deleteHint(hint)})
+            .then(reflexive_hint.create_hint);
+    }
+
     function create_first_brunch(brunch){
+        //mainbrunchの生成開始
+        //hintnav
+        hintNav_after_first_brunch();
+
         var brunch_nav = $('ul #brunch');
         $('#over_scrollWrap').css('z-index', '-5');
         nav_animation.on_navColor_animation(brunch_nav);
