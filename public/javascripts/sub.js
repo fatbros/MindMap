@@ -11,8 +11,7 @@ function SubElement(whtl, sub_id, RL, up_hierarchy_this, color){
 	this.val = '';
 	//html id名
 	this.sub_id = sub_id;
-	//下の階層にエレメントのnum
-	this.downHierarchy_numID = 0;
+	//下の階層にエレメントの数はサーバーから取得する
 	this.subElement_all = [];
 	this.subElement_all_same_hierarchy = this.up_hierarchy_this.subElement_all;
 	this.main_or_sub = 0;
@@ -114,12 +113,16 @@ SubElement.prototype.create = function(emit, mode){
 	//socket
 	//=============================================
 	if(mode === 'main' && emit !== false){
+		console.log('downhierarchy');
+		console.log(that.up_sub_id);
+		console.log(that.sub_id);
 		this.socket.emit('broadcast_subElement_create',{
 			id: that.up_sub_id,
+			sub_id: that.sub_id,
 			val: that.val,
 			rl: that.R_or_L,
 			t: that.whtl.t,
-			l: that.whtl.l
+			l: that.whtl.l,
 		});
 	}else if(mode === 'edit'){
 		this.socket.emit('broadcast_subElement_brunchEdit', {
@@ -215,6 +218,7 @@ SubElement.prototype.add_event = function(){
 		}
 	});
 	//img plusのイベント
+	//subelement create
 	img_plus.on({
 		'click': function(){
 			var RL = $(this).attr('rel');
@@ -510,28 +514,31 @@ SubElement.prototype.svg_position_down = function(){
 		this.subElement_all[i].svg.svg.svg_position(1);
 	}
 };
-
+//subelement create
 SubElement.prototype.element_new_create = function(rl, val, emit){
+	var that = this;
 	var RL = rl;
-	var sub_id = this.sub_id + '_sub' + this.downHierarchy_numID;
-	var sub_create = new SubElement(this.whtl, sub_id, RL, this, this.color);
-	this.downHierarchy_numID++;
-	this.subElement_all.push(sub_create);
-	sub_create.edit('main', val, emit);
+	//downhierarchyをサーバーから取得する
+	this.socket.emit('getDownHierarchy', this.sub_id, function(num){
+		var downHierarchy = num;
+		var sub_id = that.sub_id + '_sub' + downHierarchy;
+		console.log(sub_id);
+		var sub_create = new SubElement(that.whtl, sub_id, RL, that, that.color);
+		that.subElement_all.push(sub_create);
+		sub_create.edit('main', val, emit);
+	});
 };
 
 //test
-SubElement.prototype.otherUser_element_new_create = function(rl, val, t, l){
+SubElement.prototype.otherUser_element_new_create = function(rl, val, t, l, id){
 	var RL = rl;
-	var sub_id = this.sub_id + '_sub' + this.downHierarchy_numID;
+	var sub_id = id;
 	var sub_create = new SubElement(this.whtl, sub_id, RL, this, this.color);
 	
 	sub_create.val = val;
 	sub_create.whtl.t = t;
 	sub_create.whtl.l = l;
-	console.log(sub_create);
 
-	this.downHierarchy_numID++;
 	this.subElement_all.push(sub_create);
 	sub_create.create(false, 'main');
 };

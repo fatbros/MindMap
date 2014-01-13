@@ -498,8 +498,7 @@ $(function(){
         //===============================================
         socket.on('subElement_create', function(data){
             var subElement = access[data.id];
-            console.log(data)
-            subElement.otherUser_element_new_create(data.rl, data.val, data.t, data.l);
+            subElement.otherUser_element_new_create(data.rl, data.val, data.t, data.l, data.sub_id);
         });
 
         socket.on('subElement_brunchEdit', function(data){

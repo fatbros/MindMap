@@ -73,6 +73,25 @@ var userStatus = {
         delete this.canvas_status[number][name];
     }
 };
+//下階層のブランチの数をサーバーに保存する
+//ユーザーがいなくなった場合削除しなければならない
+var downHierarchy = (function(){
+    var num = {};
+
+    return {
+        set_downHierarchy_num: function(sub_id){
+            if(num[sub_id] === undefined){
+                num[sub_id] = 0;
+                return 0
+            }else{
+                //もとから存在している場合++する
+                num[sub_id]++;
+                return num[sub_id];
+            }
+        },
+        delete_downHierarchy: function(){}
+    }
+})();
 
 io.sockets.on('connection', function(socket){
     //ユーザーがもとからいた場合
@@ -93,6 +112,15 @@ io.sockets.on('connection', function(socket){
             canvas: userStatus.canvas_status
         });
     }
+
+    //===============================================
+    //downHierarchyの取得
+    //===============================================
+    socket.on('getDownHierarchy', function(sub_id, fn){
+        var num = downHierarchy.set_downHierarchy_num(sub_id);
+        console.log(num);
+        fn(num);
+    });
 
     //===============================================
     //userがcanvasを描画しmouseupしたとき
@@ -208,9 +236,10 @@ io.sockets.on('connection', function(socket){
         });
     });
 
-    socket.on('broadcast_subElement_create', function(data){
+    socket.on('broadcast_subElement_create', function(data){;
         socket.broadcast.emit('subElement_create', {
             id: data.id,
+            sub_id: data.sub_id,
             val: data.val,
             rl: data.rl,
             t: data.t,
