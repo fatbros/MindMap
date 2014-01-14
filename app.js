@@ -89,7 +89,11 @@ var downHierarchy = (function(){
                 return num[sub_id];
             }
         },
-        delete_downHierarchy: function(){}
+        delete_downHierarchy: function(){
+            Object.keys(num).forEach(function(key){
+                delete num[key];
+            })
+        }
     }
 })();
 
@@ -302,6 +306,7 @@ io.sockets.on('connection', function(socket){
                 for(var i = 0; i < 4; i++){
                     draw_coord_all[i].splice(0,draw_coord_all[i].length);
                 }
+                downHierarchy.delete_downHierarchy();
             }else{
                 //他にユーザーがいる場合はbroadcastする
                 socket.broadcast.emit('logout_message',{name: name});

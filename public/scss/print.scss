@@ -699,13 +699,12 @@ nav {
         @include opacity(0);
     }
     .delete {
-        width: 15px;
-        height: 15px;
+        width: 12px;
         position: absolute;
         @include opacity(0);
         cursor: pointer;
-        top: -12px;
-        right: -12px;
+        top: -8px;
+        right: -2px;
     }
 }
 

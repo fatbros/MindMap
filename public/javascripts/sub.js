@@ -138,7 +138,7 @@ SubElement.prototype.create = function(emit, mode){
 
 	this.id_select_span.after("<img src=/images/plus.png class='plus_l plus' rel=L>");
 	this.id_select_span.after("<img src=/images/plus.png class='plus_r plus' rel=R>");
-	this.id_select_span.after("<img src=/images/delete.png class='delete' rel=delete>");
+	this.id_select_span.after("<img src=/images/trash.png class='delete' rel=delete>");
 	var circle_h = 15;
 	var h = (this.id_select.outerHeight() - circle_h) / 2;
 	var img_plus = this.id_select.find('.plus');
