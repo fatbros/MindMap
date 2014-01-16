@@ -308,12 +308,12 @@ $(function(){
                 var left = ($('#hintNavigation').width() - hint.outerWidth()) / 2;
                 hintNavPos(hint, 20, left, '', '')
                     .then(function(){return flashHint(hint)})
-                    .then(function(){return delay(5000)})
+                    .then(function(){return delay(6000)})
                     .then(function(){return deleteHint(hint)})
                     //hint1終了
                     .then(function(){return hintNavPos(hint2, 20, left, '', '')})
                     .then(function(){return flashHint(hint2)})
-                    .then(function(){return delay(4000)})
+                    .then(function(){return delay(5000)})
                     .then(function(){return deleteHint(hint2)});
                     //hint2終了
             }
@@ -329,7 +329,7 @@ $(function(){
                 var left = ($('#hintNavigation').width() - hint.outerWidth()) / 2;
                 hintNavPos(hint, 30, left, '', '')
                     .then(function(){return flashHint(hint)})
-                    .then(function(){return delay(4000)})
+                    .then(function(){return delay(5000)})
                     .then(function(){return deleteHint(hint)});
             }
         })();
@@ -443,7 +443,7 @@ $(function(){
             var left = ($('#hintNavigation').width() - hint.outerWidth()) / 2;
             hintNavPos(hint, '', left, 20, '')
                 .then(function(){return flashHint(hint)})
-                .then(function(){return delay(10000)})
+                .then(function(){return delay(11000)})
                 .then(function(){return deleteHint(hint)});
 
             var canvas_nav = $('ul #canvas');
@@ -580,6 +580,9 @@ $(function(){
                 .then(function(){
                     hint_num++;
                     if(hint_num !== Object.keys(json).length){
+                        reflexive_hint.create_hint();
+                    }else{
+                        hint_num = 6;
                         reflexive_hint.create_hint();
                     }
                 });
